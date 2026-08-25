@@ -1,0 +1,6 @@
+python-fasthtml
+requests
+yt-dlp
+python-dotenv
+torch
+whisper_timestamped
