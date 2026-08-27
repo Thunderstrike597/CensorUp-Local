@@ -23,3 +23,12 @@ The first feature I added is the ability to have a sound effect play over the mu
 
 #### 2. Defaults 
 The second feature I felt was missing from the original was the ability to save time on inputting all swear words/sound effect each time I wanted to censor a video. SO.. I did just that! All default swear words and sound affects are located in ***'defaults.json'*** (With the default found effect being located in the ***'assets'*** folder)
+
+#### 3. Muting Range (V2 Upcoming)
+
+The third feature I wanted to add is the ability to only apply censoring to within a selected in/out slider range if needed! This is only applied if the ***'Only censor within a specific range'*** checkbox is ticked.
+##### 3(sub category). Muting Modifier
+A Small Feature I wanted to add related to the *Ranged Muting*, is a modifier to the feature where if the ***'Only apply sound effect within range'*** checkbox is ticked, then the ranged muting behaviour will be modified to still mute outside the in/out range, however it will not apply any sound effect outside the in/out range (If there is no sound effect uploaded, this option is redundant).
+
+<img width="2000" height="946" alt="image" src="https://github.com/user-attachments/assets/0c5801a1-46cb-49cf-86d7-f26760354568" />
+
