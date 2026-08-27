@@ -43,6 +43,9 @@ A Small Feature I wanted to add related to the *Ranged Muting*, is a modifier to
 #### 2. Playback & Timestamp
 After your video is done censoring, you now have a playback window to preview your video before you even download it! Not only that but there's also a timeline which shows where each part of the video was censored and what word was censored!
 
+<img width="1170" height="1204" alt="image" src="https://github.com/user-attachments/assets/308d16eb-c3e4-41d9-8173-3dec84220421" />
+
+
 
 ## I hope this project serves people well as it does for me!
 
