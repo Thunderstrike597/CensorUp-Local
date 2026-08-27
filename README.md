@@ -32,3 +32,15 @@ A Small Feature I wanted to add related to the *Ranged Muting*, is a modifier to
 
 <img width="2000" height="946" alt="image" src="https://github.com/user-attachments/assets/0c5801a1-46cb-49cf-86d7-f26760354568" />
 
+
+### Secondly, let's cover everything after clicking the ***'Censor Now'*** Button:
+
+#### 1. Progress Bar
+#### The Censoring of your video now has a progress bar! :D
+<img width="2048" height="652" alt="image" src="https://github.com/user-attachments/assets/ea02941b-54e7-4377-969b-9021ed3c3533" />
+
+
+#### 2. Playback & Timestamp
+After your video is done censoring, you now have a playback window to preview your video before you even download it! Not only that but there's also a timeline which shows where each part of the video was censored and what word was censored!
+
+
