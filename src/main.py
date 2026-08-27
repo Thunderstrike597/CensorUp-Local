@@ -101,11 +101,203 @@ def get(sess):
                 cls="flex w-full flex-col lg:flex-row items-start lg:items-center mb-3"
             ),
             Div(
-                Input(type="file" ,name="file",cls="file-input"),
+                Input(type="file" ,name="file",id="video-file-input",cls="file-input"),
                 Div("OR",cls="divider lg:divider-horizontal"),
                 Input(type="text", name="url",placeholder="🌐 Enter a YouTube / Facebook / Instagram / TikTok URL",cls="input input-bordered w-full"),
                 cls="flex w-full flex-col lg:flex-row"
             ),
+
+            # --- Optional in/out range restriction ---
+            Div(
+                Label(
+                    Input(type="checkbox", id="range-enable-checkbox", name="range_enabled", cls="checkbox checkbox-sm", disabled=True),
+                    Span("Only censor within a specific range", cls="ml-2"),
+                    cls="flex items-center cursor-pointer"
+                ),
+                Div(
+                    "📎 Select a file above to enable a specific in/out censoring range (not available when using a URL)",
+                    id="range-no-file-hint", cls="text-xs opacity-60 mt-1"
+                ),
+                cls="mt-4"
+            ),
+
+            Div(
+                Div(
+                    Video(id="range-preview-video", controls=True, cls="w-full rounded-lg bg-black max-h-[45vh]"),
+                    cls="mt-3"
+                ),
+
+                Div(
+                    Label(
+                        Input(type="checkbox", id="range-beep-only-checkbox", name="beep_only_in_range", cls="checkbox checkbox-sm"),
+                        Span("Only apply sound effect within range", cls="ml-2"),
+                        Span(
+                            "ⓘ",
+                            cls="tooltip tooltip-right ml-1 cursor-help",
+                            data_tip="When ON: the WHOLE video still gets every blocked word muted as normal — but only the words inside your selected in/out range get the sound effect. Words muted outside the range stay plain silence, even if you've set a sound effect above. When OFF (default): only words inside the range get censored at all — words outside it are left completely untouched."
+                        ),
+                        cls="flex items-center cursor-pointer"
+                    ),
+                    cls="mt-3"
+                ),
+
+                Div(
+                    Div(
+                        Span("0:00", id="range-label-in", cls="text-xs font-mono"),
+                        Span("0:00", id="range-label-out", cls="text-xs font-mono"),
+                        cls="flex justify-between mb-1"
+                    ),
+                    Div(
+                        Div(id="range-fill", cls="absolute h-full bg-info/60 rounded"),
+                        Div(id="range-handle-in", cls="absolute w-4 h-4 rounded-full bg-info border-2 border-white shadow top-1/2 -translate-y-1/2 -translate-x-1/2 cursor-pointer touch-none"),
+                        Div(id="range-handle-out", cls="absolute w-4 h-4 rounded-full bg-info border-2 border-white shadow top-1/2 -translate-y-1/2 -translate-x-1/2 cursor-pointer touch-none"),
+                        id="range-slider-track",
+                        cls="relative w-full h-3 bg-base-300 rounded mt-1"
+                    ),
+                    cls="mt-3"
+                ),
+
+                Input(type="hidden", name="range_start", id="range-start-input", value="0"),
+                Input(type="hidden", name="range_end", id="range-end-input", value="0"),
+
+                id="range-controls-wrapper",
+                cls="opacity-50 pointer-events-none transition-opacity duration-200"
+            ),
+
+            Script(NotStr("""
+                (function() {
+                const fileInput = document.getElementById('video-file-input');
+                const previewVideo = document.getElementById('range-preview-video');
+                const enableCb = document.getElementById('range-enable-checkbox');
+                const wrapper = document.getElementById('range-controls-wrapper');
+                const track = document.getElementById('range-slider-track');
+                const handleIn = document.getElementById('range-handle-in');
+                const handleOut = document.getElementById('range-handle-out');
+                const fill = document.getElementById('range-fill');
+                const labelIn = document.getElementById('range-label-in');
+                const labelOut = document.getElementById('range-label-out');
+                const startInput = document.getElementById('range-start-input');
+                const endInput = document.getElementById('range-end-input');
+                const noFileHint = document.getElementById('range-no-file-hint');
+                if (!fileInput || !enableCb) return;
+
+                let duration = 0;
+                let inTime = 0;
+                let outTime = 0;
+
+                function formatTime(t) {
+                    t = Math.max(0, Math.floor(t));
+                    const m = Math.floor(t / 60);
+                    const s = t % 60;
+                    return m + ':' + String(s).padStart(2, '0');
+                }
+
+                function updateUI() {
+                    if (!duration) return;
+                    const pctIn = (inTime / duration) * 100;
+                    const pctOut = (outTime / duration) * 100;
+                    handleIn.style.left = pctIn + '%';
+                    handleOut.style.left = pctOut + '%';
+                    fill.style.left = pctIn + '%';
+                    fill.style.width = Math.max(pctOut - pctIn, 0) + '%';
+                    labelIn.textContent = formatTime(inTime);
+                    labelOut.textContent = formatTime(outTime);
+                    startInput.value = inTime.toFixed(2);
+                    endInput.value = outTime.toFixed(2);
+                }
+
+                function setEnabled(isEnabled) {
+                    if (isEnabled) {
+                        wrapper.classList.remove('opacity-50', 'pointer-events-none');
+                    } else {
+                        wrapper.classList.add('opacity-50', 'pointer-events-none');
+                    }
+                }
+
+                function handleFileSelected() {
+                    if (!fileInput.files || !fileInput.files[0]) return;
+                    const url = URL.createObjectURL(fileInput.files[0]);
+                    previewVideo.src = url;
+                    enableCb.disabled = false;
+                    if (noFileHint) noFileHint.style.display = 'none';
+                    previewVideo.addEventListener('loadedmetadata', function onMeta() {
+                        duration = previewVideo.duration || 0;
+                        inTime = 0;
+                        outTime = duration;
+                        updateUI();
+                        previewVideo.removeEventListener('loadedmetadata', onMeta);
+                    });
+                    previewVideo.addEventListener('error', function onErr() {
+                        if (noFileHint) {
+                            noFileHint.style.display = '';
+                            noFileHint.textContent = "⚠️ Your browser can't preview this file format directly, so the range slider won't work for it — the file will still censor normally with range selection off.";
+                        }
+                        previewVideo.removeEventListener('error', onErr);
+                    });
+                }
+
+                fileInput.addEventListener('change', handleFileSelected);
+                // Some browsers restore a previously-selected file on reload/back-navigation
+                // without firing a fresh 'change' event — check once on load too, just in case.
+                handleFileSelected();
+
+                enableCb.addEventListener('change', function() {
+                    setEnabled(enableCb.checked);
+                });
+
+                let dragging = null; // 'in' or 'out'
+
+                function posToTime(clientX) {
+                    const rect = track.getBoundingClientRect();
+                    let pct = (clientX - rect.left) / rect.width;
+                    pct = Math.min(Math.max(pct, 0), 1);
+                    return pct * duration;
+                }
+
+                function startDrag(which) {
+                    return function(e) {
+                        if (!enableCb.checked || !duration) return;
+                        dragging = which;
+                        e.preventDefault();
+                    };
+                }
+
+                handleIn.addEventListener('pointerdown', startDrag('in'));
+                handleOut.addEventListener('pointerdown', startDrag('out'));
+
+                window.addEventListener('pointermove', function(e) {
+                    if (!dragging) return;
+                    const t = posToTime(e.clientX);
+                    if (dragging === 'in') {
+                        inTime = Math.max(0, Math.min(t, outTime));
+                        previewVideo.currentTime = inTime;
+                    } else {
+                        outTime = Math.min(duration, Math.max(t, inTime));
+                        previewVideo.currentTime = outTime;
+                    }
+                    updateUI();
+                });
+
+                window.addEventListener('pointerup', function() {
+                    dragging = null;
+                });
+
+                track.addEventListener('pointerdown', function(e) {
+                    if (!enableCb.checked || !duration) return;
+                    if (e.target === handleIn || e.target === handleOut) return;
+                    const t = posToTime(e.clientX);
+                    if (Math.abs(t - inTime) - Math.abs(t - outTime) <= 0) {
+                        inTime = Math.min(t, outTime);
+                        previewVideo.currentTime = inTime;
+                    } else {
+                        outTime = Math.max(t, inTime);
+                        previewVideo.currentTime = outTime;
+                    }
+                    updateUI();
+                });
+            })();
+            """)),
+
             Textarea(DEFAULTS.get("default_censor_words", ""), type="text", name="censor_words",placeholder="🗣️ Enter words to censor seperated by commas (ex. badword1,badword2)",cls="input input-bordered w-full mt-5"),
             Div("Supported URL platforms: YouTube, Facebook, Instagram, TikTok", cls="text-sm opacity-70 mt-2 mb-2"),
             Button("🤫 Censor Now",cls="btn btn-info mt-5"),
@@ -278,7 +470,7 @@ def render_result(result_data: dict):
     )
 
 
-def run_censor_job(job_id: str, file_path, pending_url, words_censor_list, beep_path):
+def run_censor_job(job_id: str, file_path, pending_url, words_censor_list, beep_path, range_start, range_end, beep_only_in_range):
     try:
         if pending_url:
             with JOBS_LOCK:
@@ -300,7 +492,10 @@ def run_censor_job(job_id: str, file_path, pending_url, words_censor_list, beep_
                 if job_id in JOBS:
                     JOBS[job_id]["progress"] = pct
 
-        result_data = censor_media("small", file_path, words_censor_list, beep_file=beep_path, progress_callback=progress_cb)
+        result_data = censor_media(
+            "small", file_path, words_censor_list, beep_file=beep_path, progress_callback=progress_cb,
+            range_start=range_start, range_end=range_end, beep_only_in_range=beep_only_in_range
+        )
 
         with JOBS_LOCK:
             if job_id not in JOBS:
@@ -322,7 +517,9 @@ def run_censor_job(job_id: str, file_path, pending_url, words_censor_list, beep_
 
 
 @rt('/censor_start')
-async def post(file: Optional[UploadFile] = None, beep_file: Optional[UploadFile] = None, url: str = "", censor_words: str = ""):
+async def post(file: Optional[UploadFile] = None, beep_file: Optional[UploadFile] = None, url: str = "", censor_words: str = "",
+                range_enabled: Optional[str] = None, beep_only_in_range: Optional[str] = None,
+                range_start: str = "0", range_end: str = "0"):
 
  pending_url = None
 
@@ -355,12 +552,33 @@ async def post(file: Optional[UploadFile] = None, beep_file: Optional[UploadFile
  words_censor_list = [w.strip().lower() for w in censor_words.split(",") if w.strip()]
  print(words_censor_list)
 
+ #optional in/out range restriction
+ range_is_enabled = range_enabled is not None
+ range_start_val = None
+ range_end_val = None
+ if range_is_enabled:
+   try:
+     range_start_val = float(range_start)
+     range_end_val = float(range_end)
+     if range_end_val <= range_start_val:
+       range_is_enabled = False  # degenerate/empty range — treat as if disabled
+   except ValueError:
+     range_is_enabled = False
+ beep_only_flag = beep_only_in_range is not None and range_is_enabled
+
  job_id = uuid.uuid4().hex
  initial_stage = "🌐 Downloading from URL..." if pending_url else "🗣️ Transcribing & finding censored words..."
  with JOBS_LOCK:
    JOBS[job_id] = {"status": "processing", "stage": initial_stage, "progress": 0.0, "result": None, "error": None}
 
- threading.Thread(target=run_censor_job, args=(job_id, file_path, pending_url, words_censor_list, beep_path), daemon=True).start()
+ threading.Thread(
+   target=run_censor_job,
+   args=(job_id, file_path, pending_url, words_censor_list, beep_path,
+         range_start_val if range_is_enabled else None,
+         range_end_val if range_is_enabled else None,
+         beep_only_flag),
+   daemon=True
+ ).start()
 
  return render_processing_card(job_id, initial_stage, 0)
 
