@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CensorUp — Automatic Profanity Censorship, No Signup Required</title>
-    <meta name="description" content="CensorUp automatically censors profanity and unwanted words from audio and video.">
+    <title>CensorUp-Local — A Video & Audio Censor Tool</title>
+    <meta name="description" content="CensorUp-Local is a fully offline, single-file fork of CensorUp. Automatic profanity censorship with zero setup.">
     
     <!-- DaisyUI 5 + Tailwind CSS browser -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5/dist/full.css" type="text/css">
@@ -26,203 +26,192 @@
     <script src="https://umami.is" data_website_id="1cdc08e2-77c1-4c03-b680-9e7640e41616"></script>
 
     <style>
-        .hero-section {
-            min-height: 1080px;
-            width: 100%;
+        /* Soft springy motion */
+        .bounce-hover {
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        box-shadow 0.35s ease,
+                        border-color 0.25s ease;
         }
-        .features-section {
-            min-height: 1080px;
-            width: 100%;
+        .bounce-hover:hover {
+            transform: translateY(-6px) scale(1.015);
+        }
+        .bounce-btn {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        box-shadow 0.3s ease;
+        }
+        .bounce-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+        }
+        .bounce-btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+        .logo-bounce {
+            animation: soft-bounce 2.4s ease-in-out infinite;
+        }
+        @keyframes soft-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        /* Card stack feel */
+        .info-card {
+            background: #1e1e24;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        }
+        .info-card:hover {
+            border-color: rgba(255,255,255,0.16);
+            box-shadow: 0 14px 32px rgba(0,0,0,0.45);
+        }
+        /* Keep hero filling viewport without feeling empty */
+        .hero-wrap {
+            min-height: 100vh;
+            min-height: 100dvh;
         }
     </style>
 </head>
-<body class="bg-base-300 text-base-content antialiased selection:bg-primary selection:text-primary-content">
+<body class="bg-[#121216] text-base-content antialiased selection:bg-primary selection:text-primary-content">
 
-    <!-- HERO SECTION (Segment 1: 1920x1080 base styling) -->
-    <div class="hero-section flex flex-col justify-between items-center bg-gradient-to-b from-base-900 to-base-800 p-8 md:p-16 relative overflow-hidden">
-        
-        <!-- Decorative subtle background accents -->
-        <div class="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-secondary/10 rounded-full blur-3xl pointer-events-none"></div>
-
-        <!-- Header / Identity Area -->
-        <header class="w-full max-w-6xl flex flex-col md:flex-row justify-between items-center gap-6 z-10 border-b border-base-content/10 pb-6">
-            <div class="flex items-center gap-4">
-                <div class="bg-primary text-primary-content p-3 rounded-2xl shadow-lg shadow-primary/20 animate-bounce-slow">
-                    <i class="ti ti-face-id-error text-4xl"></i>
+    <!-- TOP BANNER (matches template art) -->
+    <header class="w-full bg-[#0c0c10] border-b border-white/10 px-4 sm:px-8 py-4 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 pointer-events-none"></div>
+        <div class="relative max-w-6xl mx-auto flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                <!-- Playful logo bubble (like original CensorUp emoji vibe) -->
+                <div class="logo-bounce shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-warning to-error flex items-center justify-center shadow-lg shadow-warning/30 text-2xl sm:text-3xl select-none">
+                    🤫
                 </div>
-                <div>
-                    <h1 class="text-3xl md:text-4xl font-black tracking-tight uppercase bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                        CensorUp - Local
+                <div class="min-w-0">
+                    <h1 class="text-xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-none drop-shadow-[0_2px_0_rgba(0,0,0,0.8)]">
+                        CENSOR UP - LOCAL
+                        <span class="hidden sm:inline text-base-content/40 font-bold mx-2">|</span>
+                        <span class="block sm:inline text-sm sm:text-lg md:text-xl font-bold text-primary/90 tracking-wide mt-1 sm:mt-0">
+                            A VIDEO CENSOR TOOL!
+                        </span>
                     </h1>
-                    <p class="text-xs uppercase font-bold tracking-widest text-base-content/50 mt-0.5">
-                        A Video & Audio Censor Tool
+                </div>
+            </div>
+            <a href="https://github.com/Thunderstrike597/CensorUp-Local"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="btn btn-ghost btn-circle text-xl hover:bg-white/10 bounce-btn shrink-0"
+               title="GitHub Repository">
+                <i class="ti ti-brand-github"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- MAIN HERO: left cards + right download (template layout) -->
+    <section class="hero-wrap flex flex-col">
+        <div class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-8 py-8 md:py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+
+            <!-- LEFT: stacked info cards (your voice) -->
+            <div class="lg:col-span-7 flex flex-col gap-4">
+
+                <!-- Intro pill -->
+                <div class="info-card bounce-hover px-5 py-4">
+                    <p class="text-base sm:text-lg leading-snug">
+                        <span class="text-primary font-bold">CensorUp - local</span>, is a fork of the original project
+                        <span class="text-error font-semibold underline decoration-wavy decoration-error/60">‘CensorUp’</span>.
                     </p>
                 </div>
-            </div>
-            
-            <div class="flex items-center gap-3">
-                <a href="https://github.com/Thunderstrike597/CensorUp-Local" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-circle text-xl hover:bg-base-content/10" title="GitHub Repository">
-                    <i class="ti ti-brand-github"></i>
-                </a>
-            </div>
-        </header>
 
-        <!-- Main Structural Columns from Template -->
-        <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-12 items-center my-auto z-10">
-            
-            <!-- Left Info Panel (Cards stacking inspired by your image sketch) -->
-            <div class="lg:col-span-7 flex flex-col gap-6 text-left">
-                
-                <!-- Intro Badge -->
-                <div class="inline-flex items-center gap-2 bg-base-100 border border-base-content/10 rounded-full px-4 py-2 w-fit shadow-sm">
-                    <span class="w-2 h-2 rounded-full bg-success animate-pulse"></span>
-                    <p class="text-sm font-semibold">
-                        <span class="text-primary">CensorUp - local</span> is a custom fork of the original <span class="text-secondary underline decoration-wavy">CensorUp</span> project.
+                <!-- Why This Exists -->
+                <div class="info-card bounce-hover px-5 py-5">
+                    <h2 class="text-lg sm:text-xl font-black text-warning mb-3 tracking-wide">
+                        ---Why This Exists---
+                    </h2>
+                    <p class="text-base-content/90 text-base sm:text-lg leading-relaxed">
+                        The original had a few issues/downsides. One of those being the fact that it was
+                        <span class="text-warning font-black underline">INCREDIBLY</span>
+                        complicated to setup, requiring a lot of dependencies and knowledge of what to do and how
+                        <span class="text-base-content/60">(Despite there being a guide)</span>.
                     </p>
                 </div>
 
-                <!-- Card 1: Why This Exists -->
-                <div class="card bg-base-100/80 backdrop-blur border border-base-content/10 shadow-xl transition-all duration-300 hover:border-primary/30">
-                    <div class="card-body p-8">
-                        <div class="flex items-center gap-3 mb-3 text-warning">
-                            <i class="ti ti-help-circle text-2xl"></i>
-                            <h2 class="card-title text-xl font-bold uppercase tracking-wide">--- Why This Exists ---</h2>
-                        </div>
-                        <p class="text-base-content/80 leading-relaxed text-lg">
-                            The original application had a few significant complexities and downsides. Chief among them was being <span class="text-warning font-bold underline">INCREDIBLY complicated</span> to configure, requiring a massive stack of dependencies and deep technical setup knowledge (even when following the setup guide carefully).
-                        </p>
-                    </div>
+                <!-- What's Different -->
+                <div class="info-card bounce-hover px-5 py-5">
+                    <h2 class="text-lg sm:text-xl font-black text-secondary mb-3 tracking-wide">
+                        ---What’s Different?---
+                    </h2>
+                    <p class="text-base-content/90 text-base sm:text-lg leading-relaxed mb-3">
+                        With <span class="text-primary font-bold">CensorUp-Local</span>, the entire tool is now
+                        <span class="text-success font-black">ENTIRELY</span> bundled neatly into an executable file!
+                    </p>
+                    <p class="text-base-content/90 text-base sm:text-lg leading-relaxed">
+                        Not only that, but the original tool required some ‘storage thing?’ — well none of that!
+                        Now it’s <span class="text-secondary font-black underline">ENTIRELY Local</span>!
+                        <span class="text-base-content/60">(Hence the name)</span>
+                    </p>
                 </div>
 
-                <!-- Card 2: What's Different -->
-                <div class="card bg-base-100/80 backdrop-blur border border-base-content/10 shadow-xl transition-all duration-300 hover:border-secondary/30">
-                    <div class="card-body p-8">
-                        <div class="flex items-center gap-3 mb-3 text-secondary">
-                            <i class="ti ti-cpu text-2xl"></i>
-                            <h2 class="card-title text-xl font-bold uppercase tracking-wide">--- What's Different? ---</h2>
-                        </div>
-                        <p class="text-base-content/80 leading-relaxed text-lg mb-4">
-                            With <span class="text-primary font-bold">CensorUp-Local</span>, the entire infrastructure is now <span class="text-success font-black uppercase">ENTIRELY bundled neatly</span> into a single, executable desktop file! 
-                        </p>
-                        <p class="text-base-content/80 leading-relaxed text-lg">
-                            No external cloud storage dependencies, no confusing API configs. Everything is processed <span class="text-secondary font-bold underline">100% locally</span> on your device.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Visual Cue for Scrolling Down -->
-                <div class="flex items-center gap-2 mt-4 text-base-content/60 font-medium animate-pulse">
-                    <span>But WAIT! There's More...</span>
-                    <i class="ti ti-arrow-narrow-down text-xl"></i>
+                <!-- Teaser for later content -->
+                <div class="info-card bounce-hover px-5 py-5 text-center">
+                    <p class="text-base-content/40 text-sm tracking-widest mb-1">---------------</p>
+                    <p class="text-xl sm:text-2xl font-black text-white">
+                        But WAIT!<br class="sm:hidden"> There’s More...
+                    </p>
+                    <p class="text-base-content/50 text-sm mt-2">
+                        (More sections coming soon)
+                    </p>
                 </div>
 
             </div>
 
-            <!-- Right Action/Download Panel -->
-            <div class="lg:col-span-5 flex flex-col items-center justify-center text-center lg:text-left lg:items-start p-4">
-                <div class="w-full bg-base-100 border-2 border-dashed border-base-content/20 rounded-3xl p-8 shadow-2xl relative">
-                    <span class="absolute -top-3 right-6 badge badge-error font-bold uppercase tracking-wider px-3 py-2 text-xs">
+            <!-- RIGHT: download CTA (template’s blue button area) -->
+            <div class="lg:col-span-5 flex flex-col items-stretch lg:items-end gap-6 lg:sticky lg:top-8">
+                <div class="w-full bg-[#1a1a20] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl bounce-hover relative">
+                    <span class="absolute -top-3 right-5 badge badge-error font-bold uppercase tracking-wider text-xs px-3 py-2 shadow">
                         Desktop App
                     </span>
-                    
-                    <h3 class="text-2xl font-black mb-2 flex items-center gap-2 justify-center lg:justify-start">
-                        <i class="ti ti-sparkles text-warning"></i> Ready to Use
+
+                    <h3 class="text-2xl font-black mb-2 flex items-center gap-2">
+                        <i class="ti ti-sparkles text-warning"></i>
+                        Ready to Use
                     </h3>
-                    <p class="text-base-content/70 text-sm mb-8">
-                        Grab the bundled standalone tool or use the streamlined wizard installer to auto-generate standard desktop shortcuts.
+                    <p class="text-base-content/70 text-sm mb-6 leading-relaxed">
+                        Grab the bundled standalone tool. No setup, no cloud, no API keys — just download and run.
                     </p>
 
-                    <!-- Latest Release Button (Linked directly to your requested page) -->
-                    <a href="https://github.com/Thunderstrike597/CensorUp-Local/releases" 
-                       target="_blank" 
-                       rel="noopener noreferrer" 
-                       class="btn btn-primary btn-lg w-full text-lg font-black uppercase tracking-wider shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 gap-3 group">
-                        <i class="ti ti-download text-xl group-hover:animate-bounce"></i>
+                    <a href="https://github.com/Thunderstrike597/CensorUp-Local/releases"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="btn btn-primary btn-lg w-full text-base sm:text-lg font-black uppercase tracking-wide shadow-lg shadow-primary/40 bounce-btn gap-2">
+                        <i class="ti ti-download text-xl"></i>
                         - Latest Release
                     </a>
 
-                    <div class="flex flex-wrap gap-2 justify-center mt-6 text-xs text-base-content/50">
-                        <span class="flex items-center gap-1"><i class="ti ti-circle-check text-success"></i> No Setup Needed</span>
-                        <span class="flex items-center gap-1"><i class="ti ti-circle-check text-success"></i> 100% Offline</span>
+                    <div class="flex flex-wrap gap-3 justify-center mt-5 text-xs text-base-content/55">
+                        <span class="flex items-center gap-1.5">
+                            <i class="ti ti-circle-check text-success text-sm"></i> No Setup Needed
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <i class="ti ti-circle-check text-success text-sm"></i> 100% Offline
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <i class="ti ti-circle-check text-success text-sm"></i> Single File
+                        </span>
                     </div>
                 </div>
-            </div>
 
-        </main>
-
-        <!-- Footer Segment 1 -->
-        <footer class="w-full text-center text-xs text-base-content/40 border-t border-base-content/5 pt-4 mt-8">
-            Scroll down to explore core application features and workflow guides.
-        </footer>
-
-    </div>
-
-    <!-- FEATURES/DETAILS SECTION (Segment 2: 1920x1080 scrolling block) -->
-    <div class="features-section bg-base-100 flex flex-col justify-center items-center p-8 md:p-16 border-t border-base-content/10 relative">
-        
-        <div class="w-full max-w-5xl text-center flex flex-col gap-12">
-            
-            <div>
-                <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tight mb-4">
-                    Powerful Automation, Clean Interface
-                </h2>
-                <div class="w-24 h-1.5 bg-primary mx-auto rounded-full"></div>
-                <p class="text-base-content/60 max-w-2xl mx-auto mt-4 text-lg">
-                    CensorUp-Local translates your privacy preferences into lightning-fast media transformations right inside a customized native environment.
+                <!-- Tiny note under CTA -->
+                <p class="text-center lg:text-right text-xs text-base-content/40 px-2">
+                    Direct from the GitHub releases page
                 </p>
-            </div>
-
-            <!-- Conceptual 3-Column Feature Layout for modernized user experience -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left mt-8">
-                
-                <div class="p-6 bg-base-200 rounded-2xl border border-base-content/5 flex flex-col gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-2xl font-bold">
-                        <i class="ti ti-shield-lock"></i>
-                    </div>
-                    <h3 class="text-xl font-bold">Absolute Privacy</h3>
-                    <p class="text-base-content/70 text-sm leading-relaxed">
-                        Your processing stays where it belongs—completely local. Media tracks, files, and voice signatures are never compiled or shipped to third-party endpoints.
-                    </p>
-                </div>
-
-                <div class="p-6 bg-base-200 rounded-2xl border border-base-content/5 flex flex-col gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center text-2xl font-bold">
-                        <i class="ti ti-bolt"></i>
-                    </div>
-                    <h3 class="text-xl font-bold">Zero Overhead Setup</h3>
-                    <p class="text-base-content/70 text-sm leading-relaxed">
-                        Avoid wrestling with environment paths, runtime version conflicts, or complicated build configurations. One click runs everything out-of-the-box.
-                    </p>
-                </div>
-
-                <div class="p-6 bg-base-200 rounded-2xl border border-base-content/5 flex flex-col gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center text-2xl font-bold">
-                        <i class="ti ti-waveform"></i>
-                    </div>
-                    <h3 class="text-xl font-bold">Native Performance</h3>
-                    <p class="text-base-content/70 text-sm leading-relaxed">
-                        Leverages direct engine integrations to target frames smoothly, ensuring zero audio drops or rendering stutter during your workflow.
-                    </p>
-                </div>
-
-            </div>
-
-            <!-- Call to action block at bottom of segment 2 -->
-            <div class="bg-base-200 p-8 rounded-3xl border border-base-content/5 mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 text-left">
-                <div>
-                    <h4 class="text-lg font-bold">Ready to get started?</h4>
-                    <p class="text-sm text-base-content/60">Download the absolute latest build configuration directly from GitHub.</p>
-                </div>
-                <a href="https://github.com/Thunderstrike597/CensorUp-Local/releases" class="btn btn-outline btn-primary tracking-wide uppercase font-bold">
-                    View Project Releases <i class="ti ti-external-link"></i>
-                </a>
             </div>
 
         </div>
 
-    </div>
+        <!-- Soft separator (template’s dark bar) — empty area below for future sections -->
+        <div class="w-full border-t border-white/10 bg-[#0c0c10]/div>
+            <div class="max-w-6xl mx-auto px-4 sm:px-8 py-16 text-center">
+                <p class="text-base-content/30 text-sm tracking-wide">
+                    <!-- Placeholder so the page has a natural end; add content here later -->
+                    More features &amp; guides will land here later.
+                </p>
+            </div>
+        </div>
+    </section>
 
 </body>
 </html>
-
