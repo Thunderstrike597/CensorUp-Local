@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CensorUp-Local — A Video & Audio Censor Tool</title>
+    <meta name="description" content="CensorUp-Local is a fully offline, single-file fork of CensorUp. Automatic profanity censorship with zero setup.">
+    
+    <!-- DaisyUI 5 + Tailwind CSS browser -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5/dist/full.css" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" type="text/css">
+    
+    <!-- Favicons -->
+    <link rel="icon" href="/favicon.ico?v=2" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/favicon.ico?v=2">
+    <link rel="manifest" href="/manifest.json?v=2">
+    
+    <!-- Tailwind Browser Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    
+    <!-- Optional analytics -->
+    <script src="https://umami.is" data_website_id="1cdc08e2-77c1-4c03-b680-9e7640e41616"></script>
+
+    <style>
+        /* Bounce ONLY on the download button */
+        .bounce-btn {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        box-shadow 0.3s ease;
+        }
+        .bounce-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+        }
+        .bounce-btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+        .logo-bounce {
+            animation: soft-bounce 2.4s ease-in-out infinite;
+        }
+        @keyframes soft-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        /* Static cards — no hover enlarge */
+        .info-card {
+            background: #1e1e24;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        }
+        .feature-card {
+            background: #1e1e24;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 1.15rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        /* Soft image frames — static, no hover scale */
+        .shot-frame {
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+            border: 1px solid rgba(255,255,255,0.08);
+            background: #2a2a32;
+        }
+        .shot-frame img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .section-bar {
+            height: 10px;
+            background: linear-gradient(90deg, #1a1a20, #2a2a32, #1a1a20);
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+    </style>
+</head>
+<body class="bg-[#121216] text-base-content antialiased selection:bg-primary selection:text-primary-content">
+
+    <!-- TOP BANNER -->
+    <header class="w-full bg-[#0c0c10] border-b border-white/10 px-4 sm:px-8 py-4 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 pointer-events-none"></div>
+        <div class="relative max-w-6xl mx-auto flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                <div class="logo-bounce shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-warning to-error flex items-center justify-center shadow-lg shadow-warning/30 text-2xl sm:text-3xl select-none">
+                    🤫
+                </div>
+                <div class="min-w-0">
+                    <h1 class="text-xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-none drop-shadow-[0_2px_0_rgba(0,0,0,0.8)]">
+                        CENSOR UP - LOCAL
+                        <span class="hidden sm:inline text-base-content/40 font-bold mx-2">|</span>
+                        <span class="block sm:inline text-sm sm:text-lg md:text-xl font-bold text-primary/90 tracking-wide mt-1 sm:mt-0">
+                            A VIDEO CENSOR TOOL!
+                        </span>
+                    </h1>
+                </div>
+            </div>
+            <a href="https://github.com/Thunderstrike597/CensorUp-Local"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="btn btn-ghost btn-circle text-xl hover:bg-white/10 shrink-0"
+               title="GitHub Repository">
+                <i class="ti ti-brand-github"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- ===================== HERO ===================== -->
+    <section class="w-full">
+        <div class="max-w-6xl mx-auto px-4 sm:px-8 py-8 md:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+
+            <!-- LEFT: stacked info cards -->
+            <div class="lg:col-span-6 flex flex-col gap-3.5">
+
+                <div class="info-card px-5 py-4">
+                    <p class="text-base sm:text-lg leading-snug">
+                        <span class="text-primary font-bold">CensorUp - local</span>, is a fork of the original project
+                        <span class="text-error font-semibold underline decoration-wavy decoration-error/60">‘CensorUp’</span>.
+                    </p>
+                </div>
+
+                <div class="info-card px-5 py-5">
+                    <h2 class="text-lg sm:text-xl font-black text-warning mb-2.5 tracking-wide">
+                        ---Why This Exists---
+                    </h2>
+                    <p class="text-base-content/90 text-base sm:text-[1.05rem] leading-relaxed">
+                        The original had a few issues/downsides. One of those being the fact that it was
+                        <span class="text-warning font-black underline">INCREDIBLY</span>
+                        complicated to setup, requiring a lot of dependencies and knowledge of what to do and how
+                        <span class="text-base-content/60">(Despite there being a guide)</span>.
+                    </p>
+                </div>
+
+                <div class="info-card px-5 py-5">
+                    <h2 class="text-lg sm:text-xl font-black text-secondary mb-2.5 tracking-wide">
+                        ---What’s Different?---
+                    </h2>
+                    <p class="text-base-content/90 text-base sm:text-[1.05rem] leading-relaxed mb-2.5">
+                        With <span class="text-primary font-bold">CensorUp-Local</span>, the entire tool is now
+                        <span class="text-success font-black">ENTIRELY</span> bundled neatly into an executable file!
+                    </p>
+                    <p class="text-base-content/90 text-base sm:text-[1.05rem] leading-relaxed">
+                        Not only that, but the original tool required some ‘storage thing?’ — well none of that!
+                        Now it’s <span class="text-secondary font-black underline">ENTIRELY Local</span>!
+                        <span class="text-base-content/60">(Hence the name)</span>
+                    </p>
+                </div>
+
+                <div class="info-card px-5 py-4 text-center">
+                    <p class="text-base-content/40 text-sm tracking-widest mb-1">---------------</p>
+                    <p class="text-xl sm:text-2xl font-black text-white">
+                        But WAIT! There’s More...
+                    </p>
+                    <p class="text-base-content/50 text-sm mt-1.5">
+                        (Scroll down for feature details)
+                    </p>
+                </div>
+            </div>
+
+            <!-- RIGHT: download CTA + Minimal Example screenshot -->
+            <div class="lg:col-span-6 flex flex-col gap-5">
+
+                <!-- Ready to Use card — ONLY this has bounce -->
+                <div class="w-full bg-[#1a1a20] border border-white/10 rounded-3xl p-6 sm:p-7 shadow-2xl relative">
+                    <span class="absolute -top-3 right-5 badge badge-error font-bold uppercase tracking-wider text-xs px-3 py-2 shadow">
+                        Desktop App
+                    </span>
+
+                    <h3 class="text-2xl font-black mb-2 flex items-center gap-2">
+                        <i class="ti ti-sparkles text-warning"></i>
+                        Ready to Use
+                    </h3>
+                    <p class="text-base-content/70 text-sm mb-5 leading-relaxed">
+                        Grab the bundled standalone tool. No setup, no cloud, no API keys — just download and run.
+                    </p>
+
+                    <a href="https://github.com/Thunderstrike597/CensorUp-Local/releases"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="btn btn-primary btn-lg w-full text-base sm:text-lg font-black uppercase tracking-wide shadow-lg shadow-primary/40 bounce-btn gap-2">
+                        <i class="ti ti-download text-xl"></i>
+                        - Latest Release
+                    </a>
+
+                    <div class="flex flex-wrap gap-3 justify-center mt-4 text-xs text-base-content/55">
+                        <span class="flex items-center gap-1.5">
+                            <i class="ti ti-circle-check text-success text-sm"></i> No Setup Needed
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <i class="ti ti-circle-check text-success text-sm"></i> 100% Offline
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <i class="ti ti-circle-check text-success text-sm"></i> Single File
+                        </span>
+                    </div>
+                </div>
+
+                <p class="text-center text-xs text-base-content/40 -mt-2">
+                    Direct from the GitHub releases page
+                </p>
+
+                <!-- Minimal Example — real screenshot, no hover scale -->
+                <div class="shot-frame relative">
+                    <div class="absolute -top-3 left-4 z-10">
+                        <span class="inline-block bg-[#3a3a44] text-white font-black text-sm sm:text-base px-4 py-1.5 rounded-full shadow-lg border border-white/10">
+                            Minimal Example:
+                        </span>
+                    </div>
+                    <img src="images/minimal-example.png"
+                         alt="Minimal example of CensorUp-Local word list and supported platforms"
+                         class="w-full"
+                         loading="eager">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Separator bar -->
+    <div class="section-bar w-full"></div>
+
+    <!-- ===================== FEATURES ===================== -->
+    <section class="w-full py-10 md:py-14">
+        <div class="max-w-6xl mx-auto px-4 sm:px-8">
+
+            <div class="text-center mb-10 md:mb-12">
+                <h2 class="text-3xl sm:text-4xl font-black tracking-tight text-white mb-3">
+                    What’s New in CensorUp-Local
+                </h2>
+                <p class="text-base-content/55 max-w-2xl mx-auto text-base sm:text-lg">
+                    Same job as the original — just way less setup pain, plus a few extras that actually matter.
+                </p>
+            </div>
+
+            <!-- Text cards left + one composite screenshot right -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+
+                <!-- LEFT: feature text bubbles -->
+                <div class="lg:col-span-5 flex flex-col gap-4">
+
+                    <div class="feature-card px-5 py-5">
+                        <h3 class="text-lg sm:text-xl font-black text-primary mb-3 tracking-wide">
+                            ---Imports---
+                        </h3>
+                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                            Ok to start off, lets talk about the imports…
+                        </p>
+                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                            In the original you were only able to upload a video to censor the whole of.
+                        </p>
+                        <p class="text-base-content/90 text-base leading-relaxed">
+                            Where-as in <span class="text-primary font-bold">CensorUp-Local</span>, you can choose a sound effect to play over the muted words as-well!
+                        </p>
+                    </div>
+
+                    <div class="feature-card px-5 py-5">
+                        <h3 class="text-lg sm:text-xl font-black text-secondary mb-3 tracking-wide">
+                            ---Censor Word Keep Fraction---
+                        </h3>
+                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                            In the original I felt something was missing… I realised that feeling I felt, was the fact that the whole word was muted
+                            <span class="text-warning font-black">ENTIRELY</span>, rather than only part of the word.
+                        </p>
+                        <p class="text-base-content/90 text-base leading-relaxed">
+                            <span class="text-primary font-bold">CensorUp-Local</span> Fixes this issue entirely! Now there are two sliders, one to decide how much of the start of the word to keep, one to decide how much for the end of the word to keep!
+                        </p>
+                    </div>
+
+                    <div class="feature-card px-5 py-5">
+                        <h3 class="text-lg sm:text-xl font-black text-accent mb-3 tracking-wide">
+                            ---Censor Range---
+                        </h3>
+                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                            There was other feature I wanted to add. This wasn’t a necessary feature, but hey I needed it once and I might need it again.
+                        </p>
+                        <p class="text-base-content/90 text-base leading-relaxed">
+                            This feature I added is the ability to select an in/out range for where to apply censoring only within a range!
+                        </p>
+                    </div>
+
+                    <div class="feature-card px-5 py-5 ml-0 sm:ml-3 border-l-4 border-l-accent/50">
+                        <h3 class="text-base sm:text-lg font-black text-accent/90 mb-2 tracking-wide">
+                            ---Censor Range (Modifier)---
+                        </h3>
+                        <p class="text-base-content/90 text-sm sm:text-base leading-relaxed">
+                            To addon to the ‘Censor Range’ feature, I also added a modifier button to change the ranged behaviour!
+                            When checked, the modifier makes it so anything outside the in/out range is still censored, however only within the range applied the sound effect!
+                            <span class="text-base-content/55">(If there is no sound effect this modifier is redundant)</span>
+                        </p>
+                    </div>
+
+                    <div class="feature-card px-5 py-5">
+                        <h3 class="text-lg sm:text-xl font-black text-warning mb-3 tracking-wide">
+                            ---Chosen Censor Words (+ Defaults)---
+                        </h3>
+                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                            Lastly just like in the original, there is a ‘Chosen Words’ list to only censor words of choice!
+                        </p>
+                        <p class="text-base-content/90 text-base leading-relaxed">
+                            However now there are defaults located in the
+                            <code class="bg-base-300/80 text-secondary px-1.5 py-0.5 rounded text-sm font-mono">&lt;Install Directory&gt;/defaults.json</code>
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT: one composite screenshot of all UI segments (arrows included in image) -->
+                <div class="lg:col-span-7 lg:sticky lg:top-6">
+                    <div class="shot-frame">
+                        <img src="images/feature-segments.png"
+                             alt="CensorUp-Local interface segments: imports, keep-fraction sliders, censor range, and chosen words"
+                             class="w-full"
+                             loading="lazy">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom separator + footer -->
+    <div class="section-bar w-full"></div>
+    <footer class="w-full py-10 text-center">
+        <p class="text-base-content/40 text-sm mb-3">
+            CensorUp-Local — offline, single-file, zero setup.
+        </p>
+        <a href="https://github.com/Thunderstrike597/CensorUp-Local/releases"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="btn btn-outline btn-primary btn-sm bounce-btn uppercase tracking-wide font-bold">
+            View Releases <i class="ti ti-external-link ml-1"></i>
+        </a>
+    </footer>
+
+</body>
+</html>
