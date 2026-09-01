@@ -2,7 +2,27 @@ import os, subprocess, threading
 import whisper_timestamped as whisper
 import tqdm as _tqdm_pkg
 import whisper.transcribe as _openai_whisper_transcribe  # the real openai-whisper package (unrelated to the "whisper" alias above)
- 
+import sys
+
+def _ffmpeg_bin_dir():
+    """Return the folder that contains ffmpeg.exe / ffprobe.exe."""
+    if getattr(sys, 'frozen', False):
+        # Running as a PyInstaller one-file executable
+        return sys._MEIPASS
+    else:
+        # Running from source
+        return os.path.join(os.path.dirname(__file__), "assets", "ffmpeg")
+
+def get_ffmpeg():
+    return os.path.join(_ffmpeg_bin_dir(), "ffmpeg.exe")
+
+def get_ffprobe():
+    return os.path.join(_ffmpeg_bin_dir(), "ffprobe.exe")
+
+# Make sure Whisper (and any other library) can also find ffmpeg when frozen
+if getattr(sys, 'frozen', False):
+    os.environ["PATH"] = sys._MEIPASS + os.pathsep + os.environ.get("PATH", "")
+
 #os.environ["PATH"] += os.pathsep + r"C:\Users\Anas\ffmpeg\bin"
  
 # --- Progress reporting ---
@@ -61,15 +81,16 @@ _patch_whisper_progress_bar()
 def get_media_duration(path: str) -> float:
     """Returns duration in seconds via ffprobe (ships alongside ffmpeg)."""
     result = subprocess.run(
-        ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-         "-of", "default=noprint_wrappers=1:nokey=1", path],
+        [get_ffprobe(), "-v", "error", "-show_entries", "format=duration",
+        "-of", "default=noprint_wrappers=1:nokey=1", path],
         capture_output=True, text=True, check=True
     )
     return float(result.stdout.strip())
  
  
 def censor_media(model_type: str, input_media: str, blocked_words: list, beep_file: str = None, progress_callback=None,
-                  range_start: float = None, range_end: float = None, beep_only_in_range: bool = False):
+                  range_start: float = None, range_end: float = None, beep_only_in_range: bool = False,
+                  keep_start_fraction: float = 0.225, keep_end_fraction: float = 0.12):
     """Censors blocked words. Returns a dict {"path", "mute_ranges", "duration"}
     on success, or None if no blocked words were found. mute_ranges is a list
     of (start, end, word) tuples in seconds — used to render the preview timeline.
@@ -102,8 +123,8 @@ def censor_media(model_type: str, input_media: str, blocked_words: list, beep_fi
     # --- Partial censoring settings ---
     # KEEP_START_FRACTION: how much of the word's duration to leave audible at the START (e.g. the "f" in "fuck")
     # KEEP_END_FRACTION: how much of the word's duration to leave audible at the END (e.g. the "k" in "f**k") — set to 0 to mute all the way through
-    KEEP_START_FRACTION = 0.225
-    KEEP_END_FRACTION = 0.12
+    KEEP_START_FRACTION = keep_start_fraction
+    KEEP_END_FRACTION = keep_end_fraction
     MIN_KEEP_SECONDS = 0.06   # don't bother keeping a sliver shorter than this (very short words)
 
     range_enabled = range_start is not None and range_end is not None and range_end > range_start
@@ -213,7 +234,7 @@ def censor_media(model_type: str, input_media: str, blocked_words: list, beep_fi
         filter_complex = ";".join(filter_parts)
  
         cmd = [
-            "ffmpeg",
+            get_ffmpeg(),
             "-i", media,
             "-i", beep_file,
             "-filter_complex", filter_complex,
@@ -226,7 +247,7 @@ def censor_media(model_type: str, input_media: str, blocked_words: list, beep_fi
     else:
         # Plain mute, same as before
         cmd = [
-            "ffmpeg",
+            get_ffmpeg(),
             "-i", media,
             "-af", volume_filter,
             "-c:v", "copy",    # don't touch video

@@ -4,3 +4,6 @@ yt-dlp
 python-dotenv
 torch
 whisper_timestamped
+pystray
+Pillow
+uvicorn
