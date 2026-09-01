@@ -26,16 +26,20 @@
     <script src="https://umami.is" data_website_id="1cdc08e2-77c1-4c03-b680-9e7640e41616"></script>
 
     <style>
-        /* Bounce ONLY on the download button */
+        /* Bounce ONLY on the download button — high specificity so DaisyUI doesn't win */
+        a.bounce-btn,
         .bounce-btn {
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-                        box-shadow 0.3s ease;
+                        box-shadow 0.3s ease !important;
         }
+        a.bounce-btn:hover,
         .bounce-btn:hover {
-            transform: translateY(-3px) scale(1.03);
+            transform: translateY(-4px) scale(1.04) !important;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35) !important;
         }
+        a.bounce-btn:active,
         .bounce-btn:active {
-            transform: translateY(1px) scale(0.98);
+            transform: translateY(1px) scale(0.98) !important;
         }
         .logo-bounce {
             animation: soft-bounce 2.4s ease-in-out infinite;
@@ -44,7 +48,7 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-8px); }
         }
-        /* Static cards — no hover enlarge */
+        /* Static dark cards */
         .info-card {
             background: #1e1e24;
             border: 1px solid rgba(255,255,255,0.08);
@@ -57,13 +61,11 @@
             border-radius: 1.15rem;
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
-        /* Soft image frames — static, no hover scale */
-        .shot-frame {
-            border-radius: 1.25rem;
-            overflow: hidden;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.45);
-            border: 1px solid rgba(255,255,255,0.08);
-            background: #2a2a32;
+        /* Light panel that matches the tool UI beige/grey */
+        .light-panel {
+            background: #e8e6e1;
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
         }
         .shot-frame img {
             display: block;
@@ -160,11 +162,11 @@
                 </div>
             </div>
 
-            <!-- RIGHT: download CTA + Minimal Example screenshot -->
-            <div class="lg:col-span-6 flex flex-col gap-5">
+            <!-- RIGHT: download CTA + Minimal Example (shared light panel under download) -->
+            <div class="lg:col-span-6 flex flex-col gap-0">
 
-                <!-- Ready to Use card — ONLY this has bounce -->
-                <div class="w-full bg-[#1a1a20] border border-white/10 rounded-3xl p-6 sm:p-7 shadow-2xl relative">
+                <!-- Ready to Use card -->
+                <div class="w-full bg-[#1a1a20] border border-white/10 rounded-3xl p-6 sm:p-7 shadow-2xl relative z-10">
                     <span class="absolute -top-3 right-5 badge badge-error font-bold uppercase tracking-wider text-xs px-3 py-2 shadow">
                         Desktop App
                     </span>
@@ -198,20 +200,15 @@
                     </div>
                 </div>
 
-                <p class="text-center text-xs text-base-content/40 -mt-2">
+                <p class="text-center text-xs text-base-content/40 py-2">
                     Direct from the GitHub releases page
                 </p>
 
-                <!-- Minimal Example — real screenshot, no hover scale -->
-                <div class="shot-frame relative">
-                    <div class="absolute -top-3 left-4 z-10">
-                        <span class="inline-block bg-[#3a3a44] text-white font-black text-sm sm:text-base px-4 py-1.5 rounded-full shadow-lg border border-white/10">
-                            Minimal Example:
-                        </span>
-                    </div>
+                <!-- Light panel extends up under the download card area; image sits inside (no extra HTML label — badge is already in the PNG) -->
+                <div class="light-panel overflow-hidden -mt-1">
                     <img src="images/minimal-example.png"
                          alt="Minimal example of CensorUp-Local word list and supported platforms"
-                         class="w-full"
+                         class="w-full shot-frame"
                          loading="eager">
                 </div>
             </div>
@@ -234,88 +231,88 @@
                 </p>
             </div>
 
-            <!-- Text cards left + one composite screenshot right -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+            <!-- Light grey panel spanning left text cards + right screenshot (west edge = left cards, east = image) -->
+            <div class="light-panel p-4 sm:p-6 md:p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
 
-                <!-- LEFT: feature text bubbles -->
-                <div class="lg:col-span-5 flex flex-col gap-4">
+                    <!-- LEFT: feature text bubbles -->
+                    <div class="lg:col-span-5 flex flex-col gap-4">
 
-                    <div class="feature-card px-5 py-5">
-                        <h3 class="text-lg sm:text-xl font-black text-primary mb-3 tracking-wide">
-                            ---Imports---
-                        </h3>
-                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
-                            Ok to start off, lets talk about the imports…
-                        </p>
-                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
-                            In the original you were only able to upload a video to censor the whole of.
-                        </p>
-                        <p class="text-base-content/90 text-base leading-relaxed">
-                            Where-as in <span class="text-primary font-bold">CensorUp-Local</span>, you can choose a sound effect to play over the muted words as-well!
-                        </p>
+                        <div class="feature-card px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-primary mb-3 tracking-wide">
+                                ---Imports---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                Ok to start off, lets talk about the imports…
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                In the original you were only able to upload a video to censor the whole of.
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                Where-as in <span class="text-primary font-bold">CensorUp-Local</span>, you can choose a sound effect to play over the muted words as-well!
+                            </p>
+                        </div>
+
+                        <div class="feature-card px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-secondary mb-3 tracking-wide">
+                                ---Censor Word Keep Fraction---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                In the original I felt something was missing… I realised that feeling I felt, was the fact that the whole word was muted
+                                <span class="text-warning font-black">ENTIRELY</span>, rather than only part of the word.
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                <span class="text-primary font-bold">CensorUp-Local</span> Fixes this issue entirely! Now there are two sliders, one to decide how much of the start of the word to keep, one to decide how much for the end of the word to keep!
+                            </p>
+                        </div>
+
+                        <div class="feature-card px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-accent mb-3 tracking-wide">
+                                ---Censor Range---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                There was other feature I wanted to add. This wasn’t a necessary feature, but hey I needed it once and I might need it again.
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                This feature I added is the ability to select an in/out range for where to apply censoring only within a range!
+                            </p>
+                        </div>
+
+                        <div class="feature-card px-5 py-5 ml-0 sm:ml-3 border-l-4 border-l-accent/50">
+                            <h3 class="text-base sm:text-lg font-black text-accent/90 mb-2 tracking-wide">
+                                ---Censor Range (Modifier)---
+                            </h3>
+                            <p class="text-base-content/90 text-sm sm:text-base leading-relaxed">
+                                To addon to the ‘Censor Range’ feature, I also added a modifier button to change the ranged behaviour!
+                                When checked, the modifier makes it so anything outside the in/out range is still censored, however only within the range applied the sound effect!
+                                <span class="text-base-content/55">(If there is no sound effect this modifier is redundant)</span>
+                            </p>
+                        </div>
+
+                        <div class="feature-card px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-warning mb-3 tracking-wide">
+                                ---Chosen Censor Words (+ Defaults)---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                Lastly just like in the original, there is a ‘Chosen Words’ list to only censor words of choice!
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                However now there are defaults located in the
+                                <code class="bg-base-300/80 text-secondary px-1.5 py-0.5 rounded text-sm font-mono">&lt;Install Directory&gt;/defaults.json</code>
+                            </p>
+                        </div>
+
                     </div>
 
-                    <div class="feature-card px-5 py-5">
-                        <h3 class="text-lg sm:text-xl font-black text-secondary mb-3 tracking-wide">
-                            ---Censor Word Keep Fraction---
-                        </h3>
-                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
-                            In the original I felt something was missing… I realised that feeling I felt, was the fact that the whole word was muted
-                            <span class="text-warning font-black">ENTIRELY</span>, rather than only part of the word.
-                        </p>
-                        <p class="text-base-content/90 text-base leading-relaxed">
-                            <span class="text-primary font-bold">CensorUp-Local</span> Fixes this issue entirely! Now there are two sliders, one to decide how much of the start of the word to keep, one to decide how much for the end of the word to keep!
-                        </p>
-                    </div>
-
-                    <div class="feature-card px-5 py-5">
-                        <h3 class="text-lg sm:text-xl font-black text-accent mb-3 tracking-wide">
-                            ---Censor Range---
-                        </h3>
-                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
-                            There was other feature I wanted to add. This wasn’t a necessary feature, but hey I needed it once and I might need it again.
-                        </p>
-                        <p class="text-base-content/90 text-base leading-relaxed">
-                            This feature I added is the ability to select an in/out range for where to apply censoring only within a range!
-                        </p>
-                    </div>
-
-                    <div class="feature-card px-5 py-5 ml-0 sm:ml-3 border-l-4 border-l-accent/50">
-                        <h3 class="text-base sm:text-lg font-black text-accent/90 mb-2 tracking-wide">
-                            ---Censor Range (Modifier)---
-                        </h3>
-                        <p class="text-base-content/90 text-sm sm:text-base leading-relaxed">
-                            To addon to the ‘Censor Range’ feature, I also added a modifier button to change the ranged behaviour!
-                            When checked, the modifier makes it so anything outside the in/out range is still censored, however only within the range applied the sound effect!
-                            <span class="text-base-content/55">(If there is no sound effect this modifier is redundant)</span>
-                        </p>
-                    </div>
-
-                    <div class="feature-card px-5 py-5">
-                        <h3 class="text-lg sm:text-xl font-black text-warning mb-3 tracking-wide">
-                            ---Chosen Censor Words (+ Defaults)---
-                        </h3>
-                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
-                            Lastly just like in the original, there is a ‘Chosen Words’ list to only censor words of choice!
-                        </p>
-                        <p class="text-base-content/90 text-base leading-relaxed">
-                            However now there are defaults located in the
-                            <code class="bg-base-300/80 text-secondary px-1.5 py-0.5 rounded text-sm font-mono">&lt;Install Directory&gt;/defaults.json</code>
-                        </p>
-                    </div>
-
-                </div>
-
-                <!-- RIGHT: one composite screenshot of all UI segments (arrows included in image) -->
-                <div class="lg:col-span-7 lg:sticky lg:top-6">
-                    <div class="shot-frame">
+                    <!-- RIGHT: composite screenshot -->
+                    <div class="lg:col-span-7">
                         <img src="images/feature-segments.png"
                              alt="CensorUp-Local interface segments: imports, keep-fraction sliders, censor range, and chosen words"
-                             class="w-full"
+                             class="w-full rounded-2xl"
                              loading="lazy">
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
     </section>
