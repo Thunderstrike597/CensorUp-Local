@@ -26,16 +26,39 @@
     <script src="https://umami.is" data_website_id="1cdc08e2-77c1-4c03-b680-9e7640e41616"></script>
 
     <style>
-        /* Bounce ONLY on the download button */
-        .bounce-btn {
+        /*
+         * Bounce on download button.
+         * DaisyUI's .btn sets its own transform/transition — override on a wrapper
+         * so the whole button block lifts cleanly.
+         */
+        .bounce-wrap {
+            display: inline-flex;
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-                        box-shadow 0.3s ease;
+                        filter 0.3s ease;
         }
-        .bounce-btn:hover {
-            transform: translateY(-3px) scale(1.03);
+        .bounce-wrap:hover {
+            transform: translateY(-5px) scale(1.04);
+            filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5));
         }
-        .bounce-btn:active {
+        .bounce-wrap:active {
             transform: translateY(1px) scale(0.98);
+            filter: none;
+        }
+        /* Darker pill behind Latest Release — matches photoshopped ref */
+        .release-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #16161c;
+            color: #fff;
+            font-weight: 900;
+            font-size: 0.95rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.7rem 1.35rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
         }
         .logo-bounce {
             animation: soft-bounce 2.4s ease-in-out infinite;
@@ -44,7 +67,7 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-8px); }
         }
-        /* Static cards — no hover enlarge */
+        /* Static dark cards */
         .info-card {
             background: #1e1e24;
             border: 1px solid rgba(255,255,255,0.08);
@@ -57,13 +80,11 @@
             border-radius: 1.15rem;
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
-        /* Soft image frames — static, no hover scale */
-        .shot-frame {
-            border-radius: 1.25rem;
-            overflow: hidden;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.45);
-            border: 1px solid rgba(255,255,255,0.08);
+        /* RGB(42, 42, 50) = #2a2a32 */
+        .panel-2a {
             background: #2a2a32;
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
         }
         .shot-frame img {
             display: block;
@@ -160,59 +181,60 @@
                 </div>
             </div>
 
-            <!-- RIGHT: download CTA + Minimal Example screenshot -->
-            <div class="lg:col-span-6 flex flex-col gap-5">
+            <!-- RIGHT: ONE continuous #2a2a32 panel from north edge of download card down through Minimal Example -->
+            <div class="lg:col-span-6">
+                <div class="panel-2a p-5 sm:p-6 flex flex-col gap-4">
 
-                <!-- Ready to Use card — ONLY this has bounce -->
-                <div class="w-full bg-[#1a1a20] border border-white/10 rounded-3xl p-6 sm:p-7 shadow-2xl relative">
-                    <span class="absolute -top-3 right-5 badge badge-error font-bold uppercase tracking-wider text-xs px-3 py-2 shadow">
-                        Desktop App
-                    </span>
-
-                    <h3 class="text-2xl font-black mb-2 flex items-center gap-2">
-                        <i class="ti ti-sparkles text-warning"></i>
-                        Ready to Use
-                    </h3>
-                    <p class="text-base-content/70 text-sm mb-5 leading-relaxed">
-                        Grab the bundled standalone tool. No setup, no cloud, no API keys — just download and run.
-                    </p>
-
-                    <a href="https://github.com/Thunderstrike597/CensorUp-Local/releases"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       class="btn btn-primary btn-lg w-full text-base sm:text-lg font-black uppercase tracking-wide shadow-lg shadow-primary/40 bounce-btn gap-2">
-                        <i class="ti ti-download text-xl"></i>
-                        - Latest Release
-                    </a>
-
-                    <div class="flex flex-wrap gap-3 justify-center mt-4 text-xs text-base-content/55">
-                        <span class="flex items-center gap-1.5">
-                            <i class="ti ti-circle-check text-success text-sm"></i> No Setup Needed
+                    <!-- Ready to Use (content sits on the shared panel; no separate outer card bg needed) -->
+                    <div class="relative">
+                        <span class="absolute -top-8 right-2 badge badge-error font-bold uppercase tracking-wider text-xs px-3 py-2 shadow">
+                            Desktop App
                         </span>
-                        <span class="flex items-center gap-1.5">
-                            <i class="ti ti-circle-check text-success text-sm"></i> 100% Offline
-                        </span>
-                        <span class="flex items-center gap-1.5">
-                            <i class="ti ti-circle-check text-success text-sm"></i> Single File
-                        </span>
+
+                        <h3 class="text-2xl font-black mb-2 flex items-center gap-2 text-white">
+                            <i class="ti ti-sparkles text-warning"></i>
+                            Ready to Use
+                        </h3>
+                        <p class="text-base-content/70 text-sm mb-5 leading-relaxed">
+                            Grab the bundled standalone tool. No setup, no cloud, no API keys — just download and run.
+                        </p>
+
+                        <!-- Dark pill + text lift together on hover (matches photoshopped ref) -->
+                        <a href="https://github.com/Thunderstrike597/CensorUp-Local/releases"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="bounce-wrap inline-flex">
+                            <span class="release-pill pointer-events-none">
+                                <i class="ti ti-download text-lg"></i>
+                                <span>- LATEST RELEASE</span>
+                            </span>
+                        </a>
+
+                        <div class="flex flex-wrap gap-3 justify-center mt-4 text-xs text-base-content/55">
+                            <span class="flex items-center gap-1.5">
+                                <i class="ti ti-circle-check text-success text-sm"></i> No Setup Needed
+                            </span>
+                            <span class="flex items-center gap-1.5">
+                                <i class="ti ti-circle-check text-success text-sm"></i> 100% Offline
+                            </span>
+                            <span class="flex items-center gap-1.5">
+                                <i class="ti ti-circle-check text-success text-sm"></i> Single File
+                            </span>
+                        </div>
+
+                        <p class="text-center text-xs text-base-content/40 mt-3">
+                            Direct from the GitHub releases page
+                        </p>
                     </div>
-                </div>
 
-                <p class="text-center text-xs text-base-content/40 -mt-2">
-                    Direct from the GitHub releases page
-                </p>
-
-                <!-- Minimal Example — real screenshot, no hover scale -->
-                <div class="shot-frame relative">
-                    <div class="absolute -top-3 left-4 z-10">
-                        <span class="inline-block bg-[#3a3a44] text-white font-black text-sm sm:text-base px-4 py-1.5 rounded-full shadow-lg border border-white/10">
-                            Minimal Example:
-                        </span>
+                    <!-- Minimal Example image — same panel continues upward to download north edge -->
+                    <div class="rounded-2xl overflow-hidden">
+                        <img src="images/minimal-example.png"
+                             alt="Minimal example of CensorUp-Local word list and supported platforms"
+                             class="w-full"
+                             loading="eager">
                     </div>
-                    <img src="images/minimal-example.png"
-                         alt="Minimal example of CensorUp-Local word list and supported platforms"
-                         class="w-full"
-                         loading="eager">
+
                 </div>
             </div>
         </div>
@@ -234,88 +256,88 @@
                 </p>
             </div>
 
-            <!-- Text cards left + one composite screenshot right -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+            <!-- #2a2a32 panel spanning left text cards + right screenshot -->
+            <div class="panel-2a p-4 sm:p-6 md:p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
 
-                <!-- LEFT: feature text bubbles -->
-                <div class="lg:col-span-5 flex flex-col gap-4">
+                    <!-- LEFT: feature text bubbles -->
+                    <div class="lg:col-span-5 flex flex-col gap-4">
 
-                    <div class="feature-card px-5 py-5">
-                        <h3 class="text-lg sm:text-xl font-black text-primary mb-3 tracking-wide">
-                            ---Imports---
-                        </h3>
-                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
-                            Ok to start off, lets talk about the imports…
-                        </p>
-                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
-                            In the original you were only able to upload a video to censor the whole of.
-                        </p>
-                        <p class="text-base-content/90 text-base leading-relaxed">
-                            Where-as in <span class="text-primary font-bold">CensorUp-Local</span>, you can choose a sound effect to play over the muted words as-well!
-                        </p>
+                        <div class="feature-card px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-primary mb-3 tracking-wide">
+                                ---Imports---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                Ok to start off, lets talk about the imports…
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                In the original you were only able to upload a video to censor the whole of.
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                Where-as in <span class="text-primary font-bold">CensorUp-Local</span>, you can choose a sound effect to play over the muted words as-well!
+                            </p>
+                        </div>
+
+                        <div class="feature-card px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-secondary mb-3 tracking-wide">
+                                ---Censor Word Keep Fraction---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                In the original I felt something was missing… I realised that feeling I felt, was the fact that the whole word was muted
+                                <span class="text-warning font-black">ENTIRELY</span>, rather than only part of the word.
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                <span class="text-primary font-bold">CensorUp-Local</span> Fixes this issue entirely! Now there are two sliders, one to decide how much of the start of the word to keep, one to decide how much for the end of the word to keep!
+                            </p>
+                        </div>
+
+                        <div class="feature-card px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-accent mb-3 tracking-wide">
+                                ---Censor Range---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                There was other feature I wanted to add. This wasn’t a necessary feature, but hey I needed it once and I might need it again.
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                This feature I added is the ability to select an in/out range for where to apply censoring only within a range!
+                            </p>
+                        </div>
+
+                        <div class="feature-card px-5 py-5 ml-0 sm:ml-3 border-l-4 border-l-accent/50">
+                            <h3 class="text-base sm:text-lg font-black text-accent/90 mb-2 tracking-wide">
+                                ---Censor Range (Modifier)---
+                            </h3>
+                            <p class="text-base-content/90 text-sm sm:text-base leading-relaxed">
+                                To addon to the ‘Censor Range’ feature, I also added a modifier button to change the ranged behaviour!
+                                When checked, the modifier makes it so anything outside the in/out range is still censored, however only within the range applied the sound effect!
+                                <span class="text-base-content/55">(If there is no sound effect this modifier is redundant)</span>
+                            </p>
+                        </div>
+
+                        <div class="feature-card px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-warning mb-3 tracking-wide">
+                                ---Chosen Censor Words (+ Defaults)---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                Lastly just like in the original, there is a ‘Chosen Words’ list to only censor words of choice!
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                However now there are defaults located in the
+                                <code class="bg-base-300/80 text-secondary px-1.5 py-0.5 rounded text-sm font-mono">&lt;Install Directory&gt;/defaults.json</code>
+                            </p>
+                        </div>
+
                     </div>
 
-                    <div class="feature-card px-5 py-5">
-                        <h3 class="text-lg sm:text-xl font-black text-secondary mb-3 tracking-wide">
-                            ---Censor Word Keep Fraction---
-                        </h3>
-                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
-                            In the original I felt something was missing… I realised that feeling I felt, was the fact that the whole word was muted
-                            <span class="text-warning font-black">ENTIRELY</span>, rather than only part of the word.
-                        </p>
-                        <p class="text-base-content/90 text-base leading-relaxed">
-                            <span class="text-primary font-bold">CensorUp-Local</span> Fixes this issue entirely! Now there are two sliders, one to decide how much of the start of the word to keep, one to decide how much for the end of the word to keep!
-                        </p>
-                    </div>
-
-                    <div class="feature-card px-5 py-5">
-                        <h3 class="text-lg sm:text-xl font-black text-accent mb-3 tracking-wide">
-                            ---Censor Range---
-                        </h3>
-                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
-                            There was other feature I wanted to add. This wasn’t a necessary feature, but hey I needed it once and I might need it again.
-                        </p>
-                        <p class="text-base-content/90 text-base leading-relaxed">
-                            This feature I added is the ability to select an in/out range for where to apply censoring only within a range!
-                        </p>
-                    </div>
-
-                    <div class="feature-card px-5 py-5 ml-0 sm:ml-3 border-l-4 border-l-accent/50">
-                        <h3 class="text-base sm:text-lg font-black text-accent/90 mb-2 tracking-wide">
-                            ---Censor Range (Modifier)---
-                        </h3>
-                        <p class="text-base-content/90 text-sm sm:text-base leading-relaxed">
-                            To addon to the ‘Censor Range’ feature, I also added a modifier button to change the ranged behaviour!
-                            When checked, the modifier makes it so anything outside the in/out range is still censored, however only within the range applied the sound effect!
-                            <span class="text-base-content/55">(If there is no sound effect this modifier is redundant)</span>
-                        </p>
-                    </div>
-
-                    <div class="feature-card px-5 py-5">
-                        <h3 class="text-lg sm:text-xl font-black text-warning mb-3 tracking-wide">
-                            ---Chosen Censor Words (+ Defaults)---
-                        </h3>
-                        <p class="text-base-content/90 text-base leading-relaxed mb-3">
-                            Lastly just like in the original, there is a ‘Chosen Words’ list to only censor words of choice!
-                        </p>
-                        <p class="text-base-content/90 text-base leading-relaxed">
-                            However now there are defaults located in the
-                            <code class="bg-base-300/80 text-secondary px-1.5 py-0.5 rounded text-sm font-mono">&lt;Install Directory&gt;/defaults.json</code>
-                        </p>
-                    </div>
-
-                </div>
-
-                <!-- RIGHT: one composite screenshot of all UI segments (arrows included in image) -->
-                <div class="lg:col-span-7 lg:sticky lg:top-6">
-                    <div class="shot-frame">
+                    <!-- RIGHT: composite screenshot -->
+                    <div class="lg:col-span-7">
                         <img src="images/feature-segments.png"
                              alt="CensorUp-Local interface segments: imports, keep-fraction sliders, censor range, and chosen words"
-                             class="w-full"
+                             class="w-full rounded-2xl"
                              loading="lazy">
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
     </section>
@@ -329,8 +351,10 @@
         <a href="https://github.com/Thunderstrike597/CensorUp-Local/releases"
            target="_blank"
            rel="noopener noreferrer"
-           class="btn btn-outline btn-primary btn-sm bounce-btn uppercase tracking-wide font-bold">
-            View Releases <i class="ti ti-external-link ml-1"></i>
+           class="bounce-wrap inline-block">
+            <span class="btn btn-outline btn-primary btn-sm uppercase tracking-wide font-bold pointer-events-none">
+                View Releases <i class="ti ti-external-link ml-1"></i>
+            </span>
         </a>
     </footer>
 

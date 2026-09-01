@@ -165,9 +165,19 @@ def run_tray_once_ready():
     icon.run()
 
 
+def resource_path(relative_path):
+    """Resolve a path to a bundled resource (works both running from source
+    and running as a frozen PyInstaller build, onedir or onefile)."""
+    if getattr(sys, 'frozen', False):
+        base = sys._MEIPASS
+    else:
+        base = os.path.dirname(__file__)
+    return os.path.join(base, relative_path)
+
+
 def load_defaults():
     try:
-        with open("defaults.json", "r", encoding="utf-8") as f:
+        with open(resource_path("defaults.json"), "r", encoding="utf-8") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {"default_sound_effect": "", "default_censor_words": ""}
@@ -629,8 +639,8 @@ async def post(file: Optional[UploadFile] = None, beep_file: Optional[UploadFile
         beep_path = os.path.join("uploads", beep_file.filename)
         with open(beep_path, "wb") as f:
             f.write(beep_file.file.read())
-    elif DEFAULTS.get("default_sound_effect") and os.path.isfile(DEFAULTS["default_sound_effect"]):
-        beep_path = DEFAULTS["default_sound_effect"]
+    elif DEFAULTS.get("default_sound_effect") and os.path.isfile(resource_path(DEFAULTS["default_sound_effect"])):
+        beep_path = resource_path(DEFAULTS["default_sound_effect"])
 
     words_censor_list = [w.strip().lower() for w in censor_words.split(",") if w.strip()]
 

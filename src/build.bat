@@ -36,12 +36,17 @@ REM Check if dependencies are installed; if not, install them
 python -c "import fasthtml, pystray, PIL, PyInstaller" 2>nul
 if errorlevel 1 (
     echo Dependencies missing - installing now, this may take a while...
+    REM NOTE: installs the CPU-only build of torch. It's a fraction of the size
+    REM of the default GPU/CUDA build and is all Whisper needs for CPU transcription.
+    REM If you ever want GPU-accelerated transcription instead, remove this line
+    REM and let "pip install -r requirements.txt" pull the normal torch package.
+    pip install torch --index-url https://download.pytorch.org/whl/cpu
     pip install -r requirements.txt
     pip install pyinstaller
 )
 
 echo.
-echo Building CensorUp-Local.exe ...
+echo Building CensorUp-Local ...
 echo.
 
 REM For debugging a crash with no visible error (like on a clean VM):
@@ -49,7 +54,14 @@ REM temporarily change --windowed to --console below, rebuild, and run the
 REM .exe from an already-open Command Prompt. That keeps a terminal window
 REM attached so any crash/traceback actually prints somewhere instead of
 REM vanishing with the hidden window. Switch back to --windowed once fixed.
-pyinstaller --onefile --windowed --name CensorUp-Local ^
+REM
+REM NOTE: --onefile was removed. Onefile mode re-extracts the entire bundle
+REM (incl. torch/whisper/ffmpeg) to a fresh temp folder on every single launch,
+REM which is what was causing the multi-minute startup. Without --onefile,
+REM PyInstaller builds a folder (dist\CensorUp-Local\) with everything already
+REM unpacked, so launches are fast. See installer.iss to package that folder
+REM into a normal Windows installer so users still just get one shortcut.
+pyinstaller --windowed --name CensorUp-Local ^
   --icon "assets\icon.ico" ^
   --collect-all whisper ^
   --collect-all whisper_timestamped ^
@@ -58,16 +70,15 @@ pyinstaller --onefile --windowed --name CensorUp-Local ^
   --hidden-import=whisper_timestamped ^
   --add-data "defaults.json;." ^
   --add-data "assets;assets" ^
-  --add-binary "assets\ffmpeg\ffmpeg.exe;." ^
-  --add-binary "assets\ffmpeg\ffprobe.exe;." ^
   --add-binary "C:\Windows\System32\vcruntime140.dll;." ^
   --add-binary "C:\Windows\System32\vcruntime140_1.dll;." ^
   --add-binary "C:\Windows\System32\msvcp140.dll;." ^
   main.py
 
 echo.
-if exist "dist\CensorUp-Local.exe" (
-    echo Build successful! Executable is in the dist\ folder.
+if exist "dist\CensorUp-Local\CensorUp-Local.exe" (
+    echo Build successful! Folder is in dist\CensorUp-Local\
+    echo Run installer.iss with Inno Setup to package it into a single installer.
 ) else (
     echo Build failed. Check the errors above.
 )

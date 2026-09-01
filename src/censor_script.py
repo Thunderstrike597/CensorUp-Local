@@ -1,14 +1,42 @@
 import os, subprocess, threading
-import whisper_timestamped as whisper
 import tqdm as _tqdm_pkg
-import whisper.transcribe as _openai_whisper_transcribe  # the real openai-whisper package (unrelated to the "whisper" alias above)
 import sys
+
+# --- Whisper / torch are loaded LAZILY (only on first actual use) ---
+# These two libraries are what pull in torch, which is slow to import.
+# By NOT importing them at the top of the file, the app's window/tray icon
+# can appear immediately on launch. The (small) delay from loading them only
+# happens the first time someone actually clicks "censor" on a video.
+whisper = None
+_openai_whisper_transcribe = None
+_whisper_load_lock = threading.Lock()
+_whisper_loaded = False
+
+
+def _ensure_whisper_loaded():
+    """Imports whisper_timestamped/openai-whisper the first time it's needed,
+    and only the first time — later calls are a no-op."""
+    global whisper, _openai_whisper_transcribe, _whisper_loaded
+    if _whisper_loaded:
+        return
+    with _whisper_load_lock:
+        if _whisper_loaded:  # in case two threads got here at once
+            return
+        import whisper_timestamped as _whisper_module
+        import whisper.transcribe as _openai_module
+        globals()['whisper'] = _whisper_module
+        globals()['_openai_whisper_transcribe'] = _openai_module
+        _patch_whisper_progress_bar()
+        _whisper_loaded = True
+
 
 def _ffmpeg_bin_dir():
     """Return the folder that contains ffmpeg.exe / ffprobe.exe."""
     if getattr(sys, 'frozen', False):
-        # Running as a PyInstaller one-file executable
-        return sys._MEIPASS
+        # Running as a PyInstaller build (onedir or onefile) — ffmpeg lives
+        # under the bundled "assets/ffmpeg" folder, same as it does when
+        # running from source (see the else branch below).
+        return os.path.join(sys._MEIPASS, "assets", "ffmpeg")
     else:
         # Running from source
         return os.path.join(os.path.dirname(__file__), "assets", "ffmpeg")
@@ -21,7 +49,7 @@ def get_ffprobe():
 
 # Make sure Whisper (and any other library) can also find ffmpeg when frozen
 if getattr(sys, 'frozen', False):
-    os.environ["PATH"] = sys._MEIPASS + os.pathsep + os.environ.get("PATH", "")
+    os.environ["PATH"] = _ffmpeg_bin_dir() + os.pathsep + os.environ.get("PATH", "")
 
 #os.environ["PATH"] += os.pathsep + r"C:\Users\Anas\ffmpeg\bin"
  
@@ -43,6 +71,7 @@ class _ProgressReportingTqdm(_tqdm_pkg.tqdm):
 def _patch_whisper_progress_bar():
     """Globally patches tqdm modules in Python's cache system 
     so that whisper, openai-whisper, and whisper_timestamped all use our reporter.
+    Called once, from _ensure_whisper_loaded(), after whisper is imported.
     """
     import sys
     
@@ -75,8 +104,6 @@ def _patch_whisper_progress_bar():
     except Exception as e:
         print(f"⚠️ Could not hook into whisper's internal progress bar: {e}")
 
-_patch_whisper_progress_bar()
- 
  
 def get_media_duration(path: str) -> float:
     """Returns duration in seconds via ffprobe (ships alongside ffmpeg)."""
@@ -105,7 +132,10 @@ def censor_media(model_type: str, input_media: str, blocked_words: list, beep_fi
     but only words inside the range get the beep sound; words outside the range
     are muted in plain silence even if a beep_file is set.
     """
- 
+
+    # Make sure whisper/torch are imported (first call only — see top of file)
+    _ensure_whisper_loaded()
+
     # Load Whisper model
     model = whisper.load_model(model_type)
  
