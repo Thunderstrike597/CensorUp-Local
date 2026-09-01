@@ -1,4 +1,4 @@
-# CensorUp-Local
+# 🤫CensorUp-Local
 
 ### *'CensorUp-Local'* is a complete overhaul of The original project *'CensorUp'*, focusing on Ease Of Use & Detailed Additions!
 
