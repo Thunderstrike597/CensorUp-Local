@@ -32,17 +32,33 @@
          * so the whole button block lifts cleanly.
          */
         .bounce-wrap {
-            display: block;
+            display: inline-flex;
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
                         filter 0.3s ease;
         }
         .bounce-wrap:hover {
-            transform: translateY(-5px) scale(1.03);
-            filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.45));
+            transform: translateY(-5px) scale(1.04);
+            filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5));
         }
         .bounce-wrap:active {
             transform: translateY(1px) scale(0.98);
             filter: none;
+        }
+        /* Darker pill behind Latest Release — matches photoshopped ref */
+        .release-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #16161c;
+            color: #fff;
+            font-weight: 900;
+            font-size: 0.95rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.7rem 1.35rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
         }
         .logo-bounce {
             animation: soft-bounce 2.4s ease-in-out infinite;
@@ -183,14 +199,14 @@
                             Grab the bundled standalone tool. No setup, no cloud, no API keys — just download and run.
                         </p>
 
-                        <!-- bounce-wrap around the link so DaisyUI .btn can't kill the transform -->
+                        <!-- Dark pill + text lift together on hover (matches photoshopped ref) -->
                         <a href="https://github.com/Thunderstrike597/CensorUp-Local/releases"
                            target="_blank"
                            rel="noopener noreferrer"
-                           class="bounce-wrap">
-                            <span class="btn btn-primary btn-lg w-full text-base sm:text-lg font-black uppercase tracking-wide shadow-lg shadow-primary/40 gap-2 pointer-events-none">
-                                <i class="ti ti-download text-xl"></i>
-                                - Latest Release
+                           class="bounce-wrap inline-flex">
+                            <span class="release-pill pointer-events-none">
+                                <i class="ti ti-download text-lg"></i>
+                                <span>- LATEST RELEASE</span>
                             </span>
                         </a>
 
