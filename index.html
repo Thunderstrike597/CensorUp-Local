@@ -63,21 +63,46 @@
             border-color: rgba(255,255,255,0.16);
             box-shadow: 0 14px 32px rgba(0,0,0,0.45);
         }
-        /* Keep hero filling viewport without feeling empty */
-        .hero-wrap {
-            min-height: 100vh;
-            min-height: 100dvh;
+        /* Feature row cards (slightly tighter) */
+        .feature-card {
+            background: #1e1e24;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 1.15rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .feature-card:hover {
+            border-color: rgba(255,255,255,0.14);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+        }
+        /* Soft image frames */
+        .shot-frame {
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+            border: 1px solid rgba(255,255,255,0.08);
+            background: #2a2a32;
+        }
+        .shot-frame img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        /* Subtle separator bars */
+        .section-bar {
+            height: 10px;
+            background: linear-gradient(90deg, #1a1a20, #2a2a32, #1a1a20);
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
     </style>
 </head>
 <body class="bg-[#121216] text-base-content antialiased selection:bg-primary selection:text-primary-content">
 
-    <!-- TOP BANNER (matches template art) -->
+    <!-- TOP BANNER -->
     <header class="w-full bg-[#0c0c10] border-b border-white/10 px-4 sm:px-8 py-4 relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 pointer-events-none"></div>
         <div class="relative max-w-6xl mx-auto flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-                <!-- Playful logo bubble (like original CensorUp emoji vibe) -->
                 <div class="logo-bounce shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-warning to-error flex items-center justify-center shadow-lg shadow-warning/30 text-2xl sm:text-3xl select-none">
                     🤫
                 </div>
@@ -101,14 +126,13 @@
         </div>
     </header>
 
-    <!-- MAIN HERO: left cards + right download (template layout) -->
-    <section class="hero-wrap flex flex-col">
-        <div class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-8 py-8 md:py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+    <!-- ===================== HERO ===================== -->
+    <section class="w-full">
+        <div class="max-w-6xl mx-auto px-4 sm:px-8 py-8 md:py-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
 
-            <!-- LEFT: stacked info cards (your voice) -->
-            <div class="lg:col-span-7 flex flex-col gap-4">
+            <!-- LEFT: stacked info cards -->
+            <div class="lg:col-span-6 flex flex-col gap-3.5">
 
-                <!-- Intro pill -->
                 <div class="info-card bounce-hover px-5 py-4">
                     <p class="text-base sm:text-lg leading-snug">
                         <span class="text-primary font-bold">CensorUp - local</span>, is a fork of the original project
@@ -116,12 +140,11 @@
                     </p>
                 </div>
 
-                <!-- Why This Exists -->
                 <div class="info-card bounce-hover px-5 py-5">
-                    <h2 class="text-lg sm:text-xl font-black text-warning mb-3 tracking-wide">
+                    <h2 class="text-lg sm:text-xl font-black text-warning mb-2.5 tracking-wide">
                         ---Why This Exists---
                     </h2>
-                    <p class="text-base-content/90 text-base sm:text-lg leading-relaxed">
+                    <p class="text-base-content/90 text-base sm:text-[1.05rem] leading-relaxed">
                         The original had a few issues/downsides. One of those being the fact that it was
                         <span class="text-warning font-black underline">INCREDIBLY</span>
                         complicated to setup, requiring a lot of dependencies and knowledge of what to do and how
@@ -129,38 +152,37 @@
                     </p>
                 </div>
 
-                <!-- What's Different -->
                 <div class="info-card bounce-hover px-5 py-5">
-                    <h2 class="text-lg sm:text-xl font-black text-secondary mb-3 tracking-wide">
+                    <h2 class="text-lg sm:text-xl font-black text-secondary mb-2.5 tracking-wide">
                         ---What’s Different?---
                     </h2>
-                    <p class="text-base-content/90 text-base sm:text-lg leading-relaxed mb-3">
+                    <p class="text-base-content/90 text-base sm:text-[1.05rem] leading-relaxed mb-2.5">
                         With <span class="text-primary font-bold">CensorUp-Local</span>, the entire tool is now
                         <span class="text-success font-black">ENTIRELY</span> bundled neatly into an executable file!
                     </p>
-                    <p class="text-base-content/90 text-base sm:text-lg leading-relaxed">
+                    <p class="text-base-content/90 text-base sm:text-[1.05rem] leading-relaxed">
                         Not only that, but the original tool required some ‘storage thing?’ — well none of that!
                         Now it’s <span class="text-secondary font-black underline">ENTIRELY Local</span>!
                         <span class="text-base-content/60">(Hence the name)</span>
                     </p>
                 </div>
 
-                <!-- Teaser for later content -->
-                <div class="info-card bounce-hover px-5 py-5 text-center">
+                <div class="info-card bounce-hover px-5 py-4 text-center">
                     <p class="text-base-content/40 text-sm tracking-widest mb-1">---------------</p>
                     <p class="text-xl sm:text-2xl font-black text-white">
-                        But WAIT!<br class="sm:hidden"> There’s More...
+                        But WAIT! There’s More...
                     </p>
-                    <p class="text-base-content/50 text-sm mt-2">
+                    <p class="text-base-content/50 text-sm mt-1.5">
                         (More sections coming soon)
                     </p>
                 </div>
-
             </div>
 
-            <!-- RIGHT: download CTA (template’s blue button area) -->
-            <div class="lg:col-span-5 flex flex-col items-stretch lg:items-end gap-6 lg:sticky lg:top-8">
-                <div class="w-full bg-[#1a1a20] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl bounce-hover relative">
+            <!-- RIGHT: download CTA + Minimal Example -->
+            <div class="lg:col-span-6 flex flex-col gap-5">
+
+                <!-- Ready to Use card -->
+                <div class="w-full bg-[#1a1a20] border border-white/10 rounded-3xl p-6 sm:p-7 shadow-2xl bounce-hover relative">
                     <span class="absolute -top-3 right-5 badge badge-error font-bold uppercase tracking-wider text-xs px-3 py-2 shadow">
                         Desktop App
                     </span>
@@ -169,7 +191,7 @@
                         <i class="ti ti-sparkles text-warning"></i>
                         Ready to Use
                     </h3>
-                    <p class="text-base-content/70 text-sm mb-6 leading-relaxed">
+                    <p class="text-base-content/70 text-sm mb-5 leading-relaxed">
                         Grab the bundled standalone tool. No setup, no cloud, no API keys — just download and run.
                     </p>
 
@@ -181,7 +203,7 @@
                         - Latest Release
                     </a>
 
-                    <div class="flex flex-wrap gap-3 justify-center mt-5 text-xs text-base-content/55">
+                    <div class="flex flex-wrap gap-3 justify-center mt-4 text-xs text-base-content/55">
                         <span class="flex items-center gap-1.5">
                             <i class="ti ti-circle-check text-success text-sm"></i> No Setup Needed
                         </span>
@@ -194,24 +216,262 @@
                     </div>
                 </div>
 
-                <!-- Tiny note under CTA -->
-                <p class="text-center lg:text-right text-xs text-base-content/40 px-2">
+                <p class="text-center text-xs text-base-content/40 -mt-2">
                     Direct from the GitHub releases page
                 </p>
-            </div>
 
-        </div>
-
-        <!-- Soft separator (template’s dark bar) — empty area below for future sections -->
-        <div class="w-full border-t border-white/10 bg-[#0c0c10]/div>
-            <div class="max-w-6xl mx-auto px-4 sm:px-8 py-16 text-center">
-                <p class="text-base-content/30 text-sm tracking-wide">
-                    <!-- Placeholder so the page has a natural end; add content here later -->
-                    More features &amp; guides will land here later.
-                </p>
+                <!-- Minimal Example image -->
+                <div class="shot-frame bounce-hover relative">
+                    <div class="absolute -top-3 left-4 z-10">
+                        <span class="inline-block bg-[#3a3a44] text-white font-black text-sm sm:text-base px-4 py-1.5 rounded-full shadow-lg border border-white/10">
+                            Minimal Example:
+                        </span>
+                    </div>
+                    <img src="images/minimal-example.png"
+                         alt="Minimal example of CensorUp-Local — word list and supported platforms"
+                         class="w-full"
+                         loading="eager">
+                </div>
             </div>
         </div>
     </section>
+
+    <!-- Separator bar -->
+    <div class="section-bar w-full"></div>
+
+    <!-- ===================== FEATURES (scroll section) ===================== -->
+    <section class="w-full py-10 md:py-14">
+        <div class="max-w-6xl mx-auto px-4 sm:px-8">
+
+            <!-- Section intro -->
+            <div class="text-center mb-10 md:mb-12">
+                <h2 class="text-3xl sm:text-4xl font-black tracking-tight text-white mb-3">
+                    What’s New in CensorUp-Local
+                </h2>
+                <p class="text-base-content/55 max-w-2xl mx-auto text-base sm:text-lg">
+                    Same job as the original — just way less setup pain, plus a few extras that actually matter.
+                </p>
+            </div>
+
+            <!-- Feature rows: text left, UI right -->
+            <div class="flex flex-col gap-10 md:gap-14">
+
+                <!-- 1. Imports -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-center">
+                    <div class="lg:col-span-5">
+                        <div class="feature-card bounce-hover px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-primary mb-3 tracking-wide">
+                                ---Imports---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                Ok to start off, lets talk about the imports…
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                In the original you were only able to upload a video to censor the whole of.
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                Where-as in <span class="text-primary font-bold">CensorUp-Local</span>, you can choose a sound effect to play over the muted words as-well!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-1 hidden lg:flex items-center justify-center text-4xl text-base-content/30">
+                        →
+                    </div>
+                    <div class="lg:col-span-6">
+                        <div class="shot-frame bounce-hover bg-[#e8e6e1] p-4 sm:p-5">
+                            <!-- Recreated light UI panel for Imports -->
+                            <div class="text-center mb-4">
+                                <p class="text-[#3d3d3d] font-bold text-lg sm:text-xl flex items-center justify-center gap-2">
+                                    <span class="text-2xl">🎬</span>
+                                    Upload your Audio/Video File to Censor it Automatically!
+                                </p>
+                            </div>
+                            <div class="flex flex-col gap-3 text-sm">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-gray-700 font-medium shadow-sm">Choose File</span>
+                                    <span class="text-gray-500">No file chosen</span>
+                                    <span class="text-gray-400 text-xs ml-1">🔊 Optional: sound effect to play instead of silence</span>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-gray-700 font-medium shadow-sm">Choose File</span>
+                                    <span class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-gray-600 truncate max-w-[6rem]">N…</span>
+                                    <span class="text-gray-500 font-semibold text-xs">OR</span>
+                                    <span class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 text-gray-500 flex items-center gap-1">
+                                        🌐 Enter a YouTube / Facebook
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Censor Word Keep Fraction -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-center">
+                    <div class="lg:col-span-5">
+                        <div class="feature-card bounce-hover px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-secondary mb-3 tracking-wide">
+                                ---Censor Word Keep Fraction---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                In the original I felt something was missing… I realised that feeling I felt, was the fact that the whole word was muted
+                                <span class="text-warning font-black">ENTIRELY</span>, rather than only part of the word.
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                <span class="text-primary font-bold">CensorUp-Local</span> Fixes this issue entirely! Now there are two sliders, one to decide how much of the start of the word to keep, one to decide how much for the end of the word to keep!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-1 hidden lg:flex items-center justify-center text-4xl text-base-content/30">
+                        →
+                    </div>
+                    <div class="lg:col-span-6">
+                        <div class="shot-frame bounce-hover bg-[#e8e6e1] p-4 sm:p-5 text-[#3d3d3d]">
+                            <div class="flex flex-col gap-5">
+                                <div>
+                                    <div class="flex justify-between items-center mb-1 text-sm">
+                                        <span class="flex items-center gap-1.5">🔊 Audible start of each word</span>
+                                        <span class="font-semibold">22.5%</span>
+                                    </div>
+                                    <div class="h-2.5 bg-blue-200 rounded-full relative">
+                                        <div class="absolute left-0 top-0 h-full w-[22.5%] bg-sky-400 rounded-full"></div>
+                                        <div class="absolute left-[22.5%] top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-sky-500 rounded-full border-2 border-white shadow"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">How much of the start of each censored word stays audible</p>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-1 text-sm">
+                                        <span class="flex items-center gap-1.5">🔊 Audible end of each word</span>
+                                        <span class="font-semibold">12%</span>
+                                    </div>
+                                    <div class="h-2.5 bg-blue-200 rounded-full relative">
+                                        <div class="absolute left-0 top-0 h-full w-[12%] bg-sky-400 rounded-full"></div>
+                                        <div class="absolute left-[12%] top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-sky-500 rounded-full border-2 border-white shadow"></div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">How much of the end of each censored word stays audible</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Censor Range (+ Modifier) -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
+                    <div class="lg:col-span-5 flex flex-col gap-3.5">
+                        <div class="feature-card bounce-hover px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-accent mb-3 tracking-wide">
+                                ---Censor Range---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                There was other feature I wanted to add. This wasn’t a necessary feature, but hey I needed it once and I might need it again.
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                This feature I added is the ability to select an in/out range for where to apply censoring only within a range!
+                            </p>
+                        </div>
+                        <div class="feature-card bounce-hover px-5 py-5 ml-0 sm:ml-4 border-l-4 border-l-accent/50">
+                            <h3 class="text-base sm:text-lg font-black text-accent/90 mb-2 tracking-wide">
+                                ---Censor Range (Modifier)---
+                            </h3>
+                            <p class="text-base-content/90 text-sm sm:text-base leading-relaxed">
+                                To addon to the ‘Censor Range’ feature, I also added a modifier button to change the ranged behaviour!
+                                When checked, the modifier makes it so anything outside the in/out range is still censored, however only within the range applied the sound effect!
+                                <span class="text-base-content/55">(If there is no sound effect this modifier is redundant)</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-1 hidden lg:flex items-center justify-center text-4xl text-base-content/30 pt-16">
+                        →
+                    </div>
+                    <div class="lg:col-span-6">
+                        <div class="shot-frame bounce-hover bg-[#e8e6e1] p-4 sm:p-5 text-[#3d3d3d]">
+                            <label class="flex items-center gap-2 text-sm font-medium mb-3 cursor-default">
+                                <span class="inline-flex w-5 h-5 rounded-full bg-success/20 border-2 border-success items-center justify-center text-success text-xs">✓</span>
+                                Only censor within a specific range
+                            </label>
+                            <!-- Use real screenshot of the player for authenticity -->
+                            <div class="rounded-xl overflow-hidden border border-gray-300 shadow-inner mb-3 bg-black">
+                                <img src="images/player-screenshot.png"
+                                     alt="Video player with censor range selection"
+                                     class="w-full"
+                                     loading="lazy"
+                                     style="object-fit: cover; object-position: center 35%; max-height: 220px;">
+                            </div>
+                            <label class="flex items-center gap-2 text-sm text-gray-600 mb-3 cursor-default">
+                                <span class="inline-flex w-5 h-5 rounded-full border-2 border-gray-400"></span>
+                                Only apply sound effect within range
+                            </label>
+                            <div class="flex items-center gap-2 text-xs text-gray-500">
+                                <span>0:00</span>
+                                <div class="flex-1 h-1.5 bg-sky-200 rounded-full relative">
+                                    <div class="absolute left-0 top-0 h-full w-full bg-sky-400 rounded-full"></div>
+                                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-sky-500 rounded-full border-2 border-white shadow"></div>
+                                    <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-sky-500 rounded-full border-2 border-white shadow"></div>
+                                </div>
+                                <span>32:17</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Chosen Censor Words -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-center">
+                    <div class="lg:col-span-5">
+                        <div class="feature-card bounce-hover px-5 py-5">
+                            <h3 class="text-lg sm:text-xl font-black text-warning mb-3 tracking-wide">
+                                ---Chosen Censor Words (+ Defaults)---
+                            </h3>
+                            <p class="text-base-content/90 text-base leading-relaxed mb-3">
+                                Lastly just like in the original, there is a ‘Chosen Words’ list to only censor words of choice!
+                            </p>
+                            <p class="text-base-content/90 text-base leading-relaxed">
+                                However now there are defaults located in the
+                                <code class="bg-base-300/80 text-secondary px-1.5 py-0.5 rounded text-sm font-mono">&lt;Install Directory&gt;/defaults.json</code>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-1 hidden lg:flex items-center justify-center text-4xl text-base-content/30">
+                        →
+                    </div>
+                    <div class="lg:col-span-6">
+                        <div class="shot-frame bounce-hover bg-[#e8e6e1] p-4 sm:p-5 text-[#3d3d3d]">
+                            <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                                <span>0:00</span>
+                                <div class="w-3 h-3 rounded-full bg-sky-400 border-2 border-white shadow"></div>
+                                <div class="flex-1"></div>
+                                <span>0:00</span>
+                            </div>
+                            <div class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-700 font-mono overflow-x-auto mb-2 shadow-sm">
+                                fuck,fucks,fucking,fuckin,fucked,fucker,fuckers,bitch,bitches,retard,r…
+                            </div>
+                            <p class="text-xs text-gray-500 mb-4">
+                                Supported URL platforms: YouTube, Facebook, Instagram, TikTok
+                            </p>
+                            <div class="flex justify-center">
+                                <span class="inline-flex items-center gap-1.5 bg-sky-400 hover:bg-sky-500 text-white font-bold px-6 py-2.5 rounded-full shadow-md text-sm">
+                                    🤫 Censor Now
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom separator + footer -->
+    <div class="section-bar w-full"></div>
+    <footer class="w-full py-10 text-center">
+        <p class="text-base-content/40 text-sm mb-3">
+            CensorUp-Local — offline, single-file, zero setup.
+        </p>
+        <a href="https://github.com/Thunderstrike597/CensorUp-Local/releases"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="btn btn-outline btn-primary btn-sm bounce-btn uppercase tracking-wide font-bold">
+            View Releases <i class="ti ti-external-link ml-1"></i>
+        </a>
+    </footer>
 
 </body>
 </html>
