@@ -8,7 +8,7 @@
 
 
 ### How ***CensorUp-Local*** Differs From ***CensorUp***:
--In the original CensorUp, the project was very hard and complicated to setup on your system.. In this version, the project is *literally* one click away from being ready to use! (Although you do need python installed for this to work.. But hey! It's 10x easier than the original with python being the only thing needed! Everything else is automatically installed :D)
+-In the original CensorUp, the project was very hard and complicated to setup on your system.. In this version, the project is *literally* one click away from being ready to use! There's even an installer as of V3!
 
 -In both the original & ***CensorUp-Local***, you are able to censor any set of swear words throughout a chosen video.. However CensorUp-Local 
 Brings Extremely Useful Features To the Table (See Below For All New Features):
