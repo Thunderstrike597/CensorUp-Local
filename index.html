@@ -67,6 +67,33 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-8px); }
         }
+        /* Top banner: bottom edge bulges downward (background only) */
+        .banner-curve {
+            position: relative;
+            background: #0c0c10;
+            /* elliptical bottom corners = soft downward bulge */
+            border-bottom-left-radius: 50% 28px;
+            border-bottom-right-radius: 50% 28px;
+            padding-bottom: 1.75rem; /* room so content sits above the curve */
+            overflow: visible;
+            z-index: 20;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        }
+        .banner-curve::after {
+            /* subtle soft edge under the curve */
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 28px;
+            pointer-events: none;
+            background: radial-gradient(ellipse 100% 100% at 50% 0%,
+                rgba(0,0,0,0.25) 0%,
+                transparent 70%);
+            border-bottom-left-radius: 50% 28px;
+            border-bottom-right-radius: 50% 28px;
+        }
         /* Static dark cards */
         .info-card {
             background: #1e1e24;
@@ -102,8 +129,8 @@
 <body class="bg-[#121216] text-base-content antialiased selection:bg-primary selection:text-primary-content">
 
     <!-- TOP BANNER -->
-    <header class="w-full bg-[#0c0c10] border-b border-white/10 px-4 sm:px-8 py-4 relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 pointer-events-none"></div>
+    <header class="banner-curve w-full px-4 sm:px-8 pt-4 relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 pointer-events-none rounded-[inherit]"></div>
         <div class="relative max-w-6xl mx-auto flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 sm:gap-4 min-w-0">
                 <div class="logo-bounce shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-warning to-error flex items-center justify-center shadow-lg shadow-warning/30 text-2xl sm:text-3xl select-none">
