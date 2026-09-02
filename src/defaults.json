@@ -1,4 +1,7 @@
 {
   "default_sound_effect": "assets/default_censor.mp3",
+  "default_start_fraction": "0.225",
+  "default_end_fraction": "0.12",
   "default_censor_words": "fuck,fucks,fucking,fuckin,fucked,fucker,fuckers,bitch,bitches,retard,retards,retarded,cunt,cunts,suicide,suicides,suicidal,rape,rapes,raped,rapist,rapists,raping,rapings,raper,rapers"
+
 }

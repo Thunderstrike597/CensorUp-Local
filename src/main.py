@@ -1,7 +1,73 @@
+# --- Suppress console windows from ffmpeg/ffprobe (and any other child
+# process, e.g. the ones openai-whisper/yt-dlp launch internally) on Windows.
+# Must run before censor_script / url_downloader_script are imported below,
+# since those are what eventually trigger the subprocess calls.
+import sys as _sys
+if _sys.platform == "win32":
+    import subprocess as _subprocess
+    _original_popen_init = _subprocess.Popen.__init__
+
+    def _no_window_popen_init(self, *args, **kwargs):
+        kwargs["creationflags"] = kwargs.get("creationflags", 0) | _subprocess.CREATE_NO_WINDOW
+        return _original_popen_init(self, *args, **kwargs)
+
+    _subprocess.Popen.__init__ = _no_window_popen_init
+
 from fasthtml.common import *
 from fasthtml.components import *
 from censor_script import censor_media
 from url_downloader_script import download_video
+# --- Logging to a file (windowed mode has no console to print to, and
+# print()/exceptions were previously being discarded into os.devnull -
+# see below. Everything now goes to logs\censorup.log next to the exe
+# instead, so a crash can actually be diagnosed after the fact.) ---
+import os, logging
+from logging.handlers import RotatingFileHandler
+
+
+def _log_file_path():
+    if getattr(_sys, 'frozen', False):
+        log_dir = os.path.join(os.path.dirname(_sys.executable), "logs")
+    else:
+        log_dir = os.path.join(os.path.dirname(__file__), "logs")
+    os.makedirs(log_dir, exist_ok=True)
+    return os.path.join(log_dir, "censorup.log")
+
+
+LOG_PATH = _log_file_path()
+
+_log_handler = RotatingFileHandler(LOG_PATH, maxBytes=2_000_000, backupCount=3, encoding="utf-8")
+_log_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s"))
+
+_root_logger = logging.getLogger()
+_root_logger.setLevel(logging.INFO)
+_root_logger.addHandler(_log_handler)
+
+
+class _StreamToLogger:
+    """A drop-in stand-in for sys.stdout/sys.stderr that feeds whatever
+    gets written to it (e.g. any print() call, anywhere in the app or a
+    library) into the logging system above, line by line, instead of a
+    real console/file. Used only in --windowed frozen mode, where there's
+    no real console to write to."""
+    def __init__(self, level):
+        self.level = level
+        self._buffer = ""
+
+    def write(self, message):
+        self._buffer += message
+        while "\n" in self._buffer:
+            line, self._buffer = self._buffer.split("\n", 1)
+            if line.strip():
+                logging.log(self.level, line)
+
+    def flush(self):
+        pass
+
+    def isatty(self):
+        return False
+
+
 import os, threading, time, json, uuid, sys, io
 from typing import Optional
 import base64
@@ -9,29 +75,38 @@ from urllib.parse import urlparse
 import urllib.request
 import webbrowser
 import socket
-from starlette.responses import FileResponse
+from starlette.responses import FileResponse, StreamingResponse
+from starlette.requests import Request
+import asyncio
 
 import pystray
 from PIL import Image, ImageDraw
 
 # Fix for PyInstaller --windowed mode (no console)
-# Prevents 'NoneType' object has no attribute 'write' from print/tqdm
+# Prevents 'NoneType' object has no attribute 'write' from print/tqdm.
+# Previously sent everything to os.devnull, silently discarding every
+# print() AND every unhandled exception traceback - now goes to the log
+# file above instead, so crashes can actually be diagnosed.
 if getattr(sys, 'frozen', False):
-    sys.stdout = open(os.devnull, 'w', encoding='utf-8')
-    sys.stderr = open(os.devnull, 'w', encoding='utf-8')
+    sys.stdout = _StreamToLogger(logging.INFO)
+    sys.stderr = _StreamToLogger(logging.ERROR)
+    logging.info("=== CensorUp-Local starting (frozen build) ===")
 
 # Initialize FastHTML App
 app = FastHTML()
 rt = app.route
 os.makedirs("uploads", exist_ok=True)
 
-# --- Tray icon + auto-close when no browser tab is open ---
+# --- Tray icon + auto-close when no browser tab/window is open ---
 PORT = 5001
-HEARTBEAT_GRACE = 10  # seconds of missed heartbeats before shutting down
-DEBUG = True          # prints a live countdown from the watchdog thread
+CONNECTION_GRACE = 8  # seconds with zero open /watch connections before
+# shutting down. This absorbs a brief gap during a page refresh (the old
+# connection drops and a new one opens a moment later) without mistaking
+# it for a real close.
+DEBUG = True          # prints live connection-count info from the watchdog
 
-_last_heartbeat = {"time": None}
-_heartbeat_lock = threading.Lock()
+_active_connections = set()
+_connections_lock = threading.Lock()
 _tray_icon = {"icon": None}
 
 # --- Background job tracking (for the live progress bar) ---
@@ -75,8 +150,8 @@ def get(size: int):
 @rt('/manifest.json')
 def get():
     manifest = {
-        "name": "CensorUp",
-        "short_name": "CensorUp",
+        "name": "CensorUp-Local",
+        "short_name": "CensorUp-Local",
         "start_url": "/",
         "display": "standalone",
         "icons": [
@@ -86,15 +161,33 @@ def get():
     }
     return Response(content=json.dumps(manifest), media_type="application/manifest+json")
 
-@rt('/heartbeat')
-def post():
-    with _heartbeat_lock:
-        _last_heartbeat["time"] = time.time()
-    return ""
+@rt('/watch')
+async def get(request: Request):
+    """A long-lived connection the page keeps open for as long as it's
+    running. Unlike a JS setInterval heartbeat, this stays open at the
+    browser's network layer even if the tab's JavaScript gets fully
+    suspended while backgrounded for a long time — so the watchdog below
+    can trust it even through aggressive tab-sleeping behavior."""
+    conn_id = uuid.uuid4().hex
+
+    async def event_stream():
+        with _connections_lock:
+            _active_connections.add(conn_id)
+        try:
+            while True:
+                if await request.is_disconnected():
+                    break
+                yield "data: ping\n\n"
+                await asyncio.sleep(5)
+        finally:
+            with _connections_lock:
+                _active_connections.discard(conn_id)
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
 def _shutdown():
-    print("🛑 No open browser tab detected - shutting down.")
+    print("🛑 No open browser window detected - shutting down.")
     icon = _tray_icon.get("icon")
     if icon is not None:
         try:
@@ -106,20 +199,25 @@ def _shutdown():
 
 
 def watch_for_page_close():
+    zero_since = None
     while True:
         try:
             time.sleep(1)
-            with _heartbeat_lock:
-                last = _last_heartbeat["time"]
-            if last is not None:
-                elapsed = time.time() - last
+            with _connections_lock:
+                count = len(_active_connections)
+            if count > 0:
+                zero_since = None
                 if DEBUG:
-                    print(f"[watchdog] {elapsed:.1f}s since last heartbeat (shuts down at {HEARTBEAT_GRACE}s)")
-                if elapsed > HEARTBEAT_GRACE:
-                    _shutdown()
-                    return
-            elif DEBUG:
-                print("[watchdog] no heartbeat received yet")
+                    print(f"[watchdog] {count} open connection(s)")
+                continue
+            if zero_since is None:
+                zero_since = time.time()
+            elapsed = time.time() - zero_since
+            if DEBUG:
+                print(f"[watchdog] no open connections for {elapsed:.1f}s (shuts down at {CONNECTION_GRACE}s)")
+            if elapsed > CONNECTION_GRACE:
+                _shutdown()
+                return
         except Exception as e:
             if DEBUG:
                 print(f"[watchdog] error in watchdog loop: {e}")
@@ -177,11 +275,25 @@ def resource_path(relative_path):
 
 def load_defaults():
     try:
-        with open(resource_path("defaults.json"), "r", encoding="utf-8") as f:
+        with open("defaults.json", "r", encoding="utf-8") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
-        return {"default_sound_effect": "", "default_censor_words": ""}
+        return {"default_sound_effect": "", "default_censor_words": "", "default_start_fraction": "0.225", "default_end_fraction": "0.12"}
 
+def fraction_to_percent_str(fraction, fallback=0.0):
+    """Mirrors the JS formula in the slider's oninput handler
+    (Math.round(this.value*1000)/10 + '%'), so the label shown on page
+    load matches what the slider would show if you dragged it there.
+    Falls back to `fallback` if the value is missing/invalid (e.g. an
+    older defaults.json that predates these keys), instead of crashing
+    the whole homepage."""
+    try:
+        pct = round(float(fraction) * 1000) / 10
+    except (TypeError, ValueError):
+        pct = round(float(fallback) * 1000) / 10
+    if pct == int(pct):          # e.g. 12.0 -> "12%" instead of "12.0%"
+        return f"{int(pct)}%"
+    return f"{pct}%"
 
 DEFAULTS = load_defaults()
 
@@ -227,12 +339,21 @@ Defaults = (
     Meta(name="viewport", content="width=device-width, initial-scale=1"),
     Meta(name="description", content="CensorUp automatically censors profanity and unwanted words from audio and video."),
 
-    # Heartbeat script
+    # Connection-watchdog script — opens a persistent connection that the
+    # server uses to know the window is still open (see /watch route).
+    # EventSource has built-in auto-reconnect, and the onerror handler below
+    # gives it a nudge too, so brief hiccups (e.g. the server itself briefly
+    # busy) don't get mistaken for the window closing.
     Script(NotStr("""
         (function() {
-            function ping() { fetch('/heartbeat', {method: 'POST'}).catch(function(){}); }
-            ping();
-            setInterval(ping, 3000);
+            function connect() {
+                const es = new EventSource('/watch');
+                es.onerror = function() {
+                    es.close();
+                    setTimeout(connect, 1000);
+                };
+            }
+            connect();
         })();
     """)),
 )
@@ -240,6 +361,16 @@ Defaults = (
 
 @rt('/')
 def get(sess):
+    try:
+        return _render_homepage(sess)
+    except Exception:
+        logging.exception("Homepage ('/') route crashed")
+        return Div(
+            Div("⚠️ Something went wrong loading the page. Check logs\\censorup.log for details.", cls="alert alert-error"),
+        )
+
+
+def _render_homepage(sess):
     navbar = Div(
         Div("🤫 CensorUp", cls="text-2xl text-info font-bold navbar-start"),
         Div(
@@ -248,6 +379,9 @@ def get(sess):
         ),
         cls="navbar bg-ghost py-2 fixed z-50"
     )
+
+    default_start_fraction = DEFAULTS.get("default_start_fraction") or 0.225
+    default_end_fraction = DEFAULTS.get("default_end_fraction") or 0.12
 
     first_hero = Div(
         Div(
@@ -269,12 +403,12 @@ def get(sess):
                         Div(
                             Label(
                                 Span("🔈 Audible start of each word", cls="text-sm"),
-                                Span("22.5%", id="keep-start-value", cls="text-sm font-mono opacity-70"),
+                                Span(fraction_to_percent_str(default_start_fraction), id="keep-start-value", cls="text-sm font-mono opacity-70"),
                                 cls="flex justify-between items-center"
                             ),
                             Input(
                                 type="range", name="keep_start_fraction", id="keep-start-slider",
-                                min="0", max="1", step="0.01", value="0.225",
+                                min="0", max="1", step="0.01", value=default_start_fraction,
                                 cls="range range-info range-xs w-full",
                                 oninput="document.getElementById('keep-start-value').textContent = Math.round(this.value*1000)/10 + '%'"
                             ),
@@ -284,12 +418,12 @@ def get(sess):
                         Div(
                             Label(
                                 Span("🔈 Audible end of each word", cls="text-sm"),
-                                Span("12%", id="keep-end-value", cls="text-sm font-mono opacity-70"),
+                                Span(fraction_to_percent_str(default_end_fraction), id="keep-end-value", cls="text-sm font-mono opacity-70"),
                                 cls="flex justify-between items-center"
                             ),
                             Input(
                                 type="range", name="keep_end_fraction", id="keep-end-slider",
-                                min="0", max="1", step="0.01", value="0.12",
+                                min="0", max="1", step="0.01", value=default_end_fraction,
                                 cls="range range-info range-xs w-full",
                                 oninput="document.getElementById('keep-end-value').textContent = Math.round(this.value*1000)/10 + '%'"
                             ),
@@ -535,11 +669,36 @@ def render_result(result_data: dict):
            playhead.style.left = pct + '%';
        }});
 
-       track.addEventListener('click', function(e) {{
+       function seekToClientX(clientX) {{
            const rect = track.getBoundingClientRect();
-           const pct = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+           const pct = Math.min(Math.max((clientX - rect.left) / rect.width, 0), 1);
            video.currentTime = pct * duration;
+       }}
+
+       let scrubbing = false;
+       let wasPlaying = false;
+
+       track.addEventListener('pointerdown', function(e) {{
+           scrubbing = true;
+           wasPlaying = !video.paused;
+           if (wasPlaying) video.pause();  // avoid fighting playback while dragging
+           track.setPointerCapture(e.pointerId);  // keeps tracking even if the
+                                                    // pointer moves outside the bar
+           seekToClientX(e.clientX);
        }});
+
+       track.addEventListener('pointermove', function(e) {{
+           if (!scrubbing) return;
+           seekToClientX(e.clientX);
+       }});
+
+       function stopScrubbing(e) {{
+           if (!scrubbing) return;
+           scrubbing = false;
+           if (wasPlaying) video.play();
+       }}
+       track.addEventListener('pointerup', stopScrubbing);
+       track.addEventListener('pointercancel', stopScrubbing);
     }})();
     """)
 
@@ -639,8 +798,8 @@ async def post(file: Optional[UploadFile] = None, beep_file: Optional[UploadFile
         beep_path = os.path.join("uploads", beep_file.filename)
         with open(beep_path, "wb") as f:
             f.write(beep_file.file.read())
-    elif DEFAULTS.get("default_sound_effect") and os.path.isfile(resource_path(DEFAULTS["default_sound_effect"])):
-        beep_path = resource_path(DEFAULTS["default_sound_effect"])
+    elif DEFAULTS.get("default_sound_effect") and os.path.isfile(DEFAULTS["default_sound_effect"]):
+        beep_path = DEFAULTS["default_sound_effect"]
 
     words_censor_list = [w.strip().lower() for w in censor_words.split(",") if w.strip()]
 
@@ -760,5 +919,9 @@ threading.Thread(target=wait_for_server_and_launch, args=(PORT,), daemon=True).s
 # --- Main Uvicorn Server Anchor ---
 import uvicorn
 if __name__ == "__main__":
-    # log_config=None prevents the isatty crash in --windowed mode
+    # log_config=None skips uvicorn's own logging setup (which used to
+    # crash on isatty checks in windowed mode) - but since we already
+    # attached a file handler to the root logger above, uvicorn's own
+    # loggers (including unhandled-exception logging) still propagate to
+    # it and land in logs\censorup.log.
     uvicorn.run(app, host="127.0.0.1", port=PORT, log_config=None)

@@ -60,12 +60,62 @@
             border: 1px solid rgba(255,255,255,0.06);
             box-shadow: 0 4px 14px rgba(0,0,0,0.4);
         }
+        /* Header nav pills (Twitch / GitHub) — #1a1a20 */
+        .nav-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: #1a1a20;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+            padding: 0.45rem 0.95rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.35);
+            white-space: nowrap;
+        }
+        .nav-pill .twitch-icon {
+            color: #9146FF;
+            font-size: 1.15rem;
+        }
+        .nav-pill .github-icon {
+            font-size: 1.15rem;
+        }
         .logo-bounce {
             animation: soft-bounce 2.4s ease-in-out infinite;
         }
         @keyframes soft-bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-8px); }
+        }
+        /* Top banner: bottom edge bulges downward (background only) */
+        .banner-curve {
+            position: relative;
+            background: #0c0c10;
+            /* elliptical bottom corners = soft downward bulge */
+            border-bottom-left-radius: 50% 28px;
+            border-bottom-right-radius: 50% 28px;
+            padding-bottom: 1.75rem; /* room so content sits above the curve */
+            overflow: visible;
+            z-index: 20;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        }
+        .banner-curve::after {
+            /* subtle soft edge under the curve */
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 28px;
+            pointer-events: none;
+            background: radial-gradient(ellipse 100% 100% at 50% 0%,
+                rgba(0,0,0,0.25) 0%,
+                transparent 70%);
+            border-bottom-left-radius: 50% 28px;
+            border-bottom-right-radius: 50% 28px;
         }
         /* Static dark cards */
         .info-card {
@@ -102,30 +152,48 @@
 <body class="bg-[#121216] text-base-content antialiased selection:bg-primary selection:text-primary-content">
 
     <!-- TOP BANNER -->
-    <header class="w-full bg-[#0c0c10] border-b border-white/10 px-4 sm:px-8 py-4 relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 pointer-events-none"></div>
-        <div class="relative max-w-6xl mx-auto flex items-center justify-between gap-4">
+    <header class="banner-curve w-full px-4 sm:px-8 pt-4 relative">
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 pointer-events-none rounded-[inherit]"></div>
+        <div class="relative max-w-6xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
+            <!-- Logo + title (logo upscaled to match ref) -->
             <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-                <div class="logo-bounce shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-warning to-error flex items-center justify-center shadow-lg shadow-warning/30 text-2xl sm:text-3xl select-none">
+                <div class="logo-bounce shrink-0 text-5xl sm:text-6xl leading-none select-none drop-shadow-[0_4px_12px_rgba(0,0,0,0.45)]" aria-hidden="true">
                     🤫
                 </div>
                 <div class="min-w-0">
-                    <h1 class="text-xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-none drop-shadow-[0_2px_0_rgba(0,0,0,0.8)]">
+                    <h1 class="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-tight text-white leading-none drop-shadow-[0_2px_0_rgba(0,0,0,0.8)]">
                         CENSOR UP - LOCAL
-                        <span class="hidden sm:inline text-base-content/40 font-bold mx-2">|</span>
-                        <span class="block sm:inline text-sm sm:text-lg md:text-xl font-bold text-primary/90 tracking-wide mt-1 sm:mt-0">
+                        <span class="hidden sm:inline text-white/50 font-bold mx-1.5 sm:mx-2">|</span>
+                        <span class="block sm:inline text-xs sm:text-base md:text-lg lg:text-xl font-bold text-white tracking-wide mt-1 sm:mt-0">
                             A VIDEO CENSOR TOOL!
                         </span>
                     </h1>
                 </div>
             </div>
-            <a href="https://github.com/Thunderstrike597/CensorUp-Local"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="btn btn-ghost btn-circle text-xl hover:bg-white/10 shrink-0"
-               title="GitHub Repository">
-                <i class="ti ti-brand-github"></i>
-            </a>
+
+            <!-- Twitch + GitHub pills (#1a1a20), bounce on hover -->
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <a href="https://www.twitch.tv/thekahnkenji"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="bounce-wrap"
+                   title="Twitch — thekahnkenji">
+                    <span class="nav-pill pointer-events-none">
+                        <span>Twitch -</span>
+                        <i class="ti ti-brand-twitch twitch-icon"></i>
+                    </span>
+                </a>
+                <a href="https://github.com/Thunderstrike597/CensorUp-Local"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="bounce-wrap"
+                   title="GitHub Repository">
+                    <span class="nav-pill pointer-events-none">
+                        <span>Github Page -</span>
+                        <i class="ti ti-brand-github github-icon"></i>
+                    </span>
+                </a>
+            </div>
         </div>
     </header>
 
@@ -139,7 +207,7 @@
                 <div class="info-card px-5 py-4">
                     <p class="text-base sm:text-lg leading-snug">
                         <span class="text-primary font-bold">CensorUp - local</span>, is a fork of the original project
-                        <span class="text-error font-semibold underline decoration-wavy decoration-error/60">‘CensorUp’</span>.
+                        <span class="text-primary font-bold">‘CensorUp’</span>.
                     </p>
                 </div>
 
@@ -196,7 +264,7 @@
                             Ready to Use
                         </h3>
                         <p class="text-base-content/70 text-sm mb-5 leading-relaxed">
-                            Grab the bundled standalone tool. No setup, no cloud, no API keys — just download and run.
+                            Download Here! Just a one click setup and ready to use! - No Cloud or API keys needed :D
                         </p>
 
                         <!-- Dark pill + text lift together on hover (matches photoshopped ref) -->
@@ -252,7 +320,7 @@
                     What’s New in CensorUp-Local
                 </h2>
                 <p class="text-base-content/55 max-w-2xl mx-auto text-base sm:text-lg">
-                    Same job as the original — just way less setup pain, plus a few extras that actually matter.
+                    Exact same purpose as the original - With many quality of life/control changes that really help!
                 </p>
             </div>
 
@@ -346,7 +414,7 @@
     <div class="section-bar w-full"></div>
     <footer class="w-full py-10 text-center">
         <p class="text-base-content/40 text-sm mb-3">
-            CensorUp-Local — offline, single-file, zero setup.
+            CensorUp-Local - offline, single-file, zero setup.
         </p>
         <a href="https://github.com/Thunderstrike597/CensorUp-Local/releases"
            target="_blank"
