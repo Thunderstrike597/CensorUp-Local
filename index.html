@@ -60,6 +60,29 @@
             border: 1px solid rgba(255,255,255,0.06);
             box-shadow: 0 4px 14px rgba(0,0,0,0.4);
         }
+        /* Header nav pills (Twitch / GitHub) — #1a1a20 */
+        .nav-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: #1a1a20;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+            padding: 0.45rem 0.95rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.35);
+            white-space: nowrap;
+        }
+        .nav-pill .twitch-icon {
+            color: #9146FF;
+            font-size: 1.15rem;
+        }
+        .nav-pill .github-icon {
+            font-size: 1.15rem;
+        }
         .logo-bounce {
             animation: soft-bounce 2.4s ease-in-out infinite;
         }
@@ -131,28 +154,46 @@
     <!-- TOP BANNER -->
     <header class="banner-curve w-full px-4 sm:px-8 pt-4 relative">
         <div class="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 pointer-events-none rounded-[inherit]"></div>
-        <div class="relative max-w-6xl mx-auto flex items-center justify-between gap-4">
+        <div class="relative max-w-6xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
+            <!-- Logo + title (logo upscaled to match ref) -->
             <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-                <div class="logo-bounce shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-warning to-error flex items-center justify-center shadow-lg shadow-warning/30 text-2xl sm:text-3xl select-none">
+                <div class="logo-bounce shrink-0 text-5xl sm:text-6xl leading-none select-none drop-shadow-[0_4px_12px_rgba(0,0,0,0.45)]" aria-hidden="true">
                     🤫
                 </div>
                 <div class="min-w-0">
-                    <h1 class="text-xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-none drop-shadow-[0_2px_0_rgba(0,0,0,0.8)]">
+                    <h1 class="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-black tracking-tight text-white leading-none drop-shadow-[0_2px_0_rgba(0,0,0,0.8)]">
                         CENSOR UP - LOCAL
-                        <span class="hidden sm:inline text-base-content/40 font-bold mx-2">|</span>
-                        <span class="block sm:inline text-sm sm:text-lg md:text-xl font-bold text-primary/90 tracking-wide mt-1 sm:mt-0">
+                        <span class="hidden sm:inline text-white/50 font-bold mx-1.5 sm:mx-2">|</span>
+                        <span class="block sm:inline text-xs sm:text-base md:text-lg lg:text-xl font-bold text-white tracking-wide mt-1 sm:mt-0">
                             A VIDEO CENSOR TOOL!
                         </span>
                     </h1>
                 </div>
             </div>
-            <a href="https://github.com/Thunderstrike597/CensorUp-Local"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="btn btn-ghost btn-circle text-xl hover:bg-white/10 shrink-0"
-               title="GitHub Repository">
-                <i class="ti ti-brand-github"></i>
-            </a>
+
+            <!-- Twitch + GitHub pills (#1a1a20), bounce on hover -->
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <a href="https://www.twitch.tv/thekahnkenji"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="bounce-wrap"
+                   title="Twitch — thekahnkenji">
+                    <span class="nav-pill pointer-events-none">
+                        <span>Twitch -</span>
+                        <i class="ti ti-brand-twitch twitch-icon"></i>
+                    </span>
+                </a>
+                <a href="https://github.com/Thunderstrike597/CensorUp-Local"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="bounce-wrap"
+                   title="GitHub Repository">
+                    <span class="nav-pill pointer-events-none">
+                        <span>Github Page -</span>
+                        <i class="ti ti-brand-github github-icon"></i>
+                    </span>
+                </a>
+            </div>
         </div>
     </header>
 
