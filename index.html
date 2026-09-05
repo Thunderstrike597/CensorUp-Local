@@ -36,6 +36,10 @@
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
                         filter 0.3s ease;
         }
+        a.bounce-wrap.w-full {
+            display: flex;
+            width: 100%;
+        }
         .bounce-wrap:hover {
             transform: translateY(-5px) scale(1.04);
             filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5));
@@ -59,6 +63,26 @@
             border-radius: 9999px;
             border: 1px solid rgba(255,255,255,0.06);
             box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+        }
+        /* Full-width dark pill under Minimal Example */
+        .projects-pill {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            width: 100%;
+            background: #121218;
+            color: #fff;
+            font-weight: 900;
+            font-size: 1.35rem;
+            letter-spacing: 0.01em;
+            padding: 0.95rem 1.5rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+        }
+        @media (min-width: 640px) {
+            .projects-pill { font-size: 1.65rem; }
         }
         /* Header nav pills (Twitch / GitHub) — #1a1a20 */
         .nav-pill {
@@ -320,6 +344,18 @@
                              class="w-full"
                              loading="eager">
                     </div>
+
+                    <!-- Divider + My Other Projects (extends same #2a2a32 panel downward) -->
+                    <div class="w-full h-[3px] rounded-full bg-white/85 my-1"></div>
+
+                    <a href="projects.html"
+                       class="bounce-wrap w-full"
+                       title="My Other Projects">
+                        <span class="projects-pill pointer-events-none">
+                            My Other Projects
+                            <span class="text-2xl sm:text-3xl leading-none font-black" aria-hidden="true">→</span>
+                        </span>
+                    </a>
 
                 </div>
             </div>
