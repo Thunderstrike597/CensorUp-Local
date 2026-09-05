@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Other Projects | CensorUp-Local</title>
+    <meta name="description" content="Other projects by the creator of CensorUp-Local.">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5/dist/full.css" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" type="text/css">
+    <link rel="icon" href="/favicon.ico?v=2" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+    <style>
+        .bounce-wrap {
+            display: inline-flex;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+        }
+        .bounce-wrap:hover {
+            transform: translateY(-5px) scale(1.04);
+            filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5));
+        }
+        .bounce-wrap:active {
+            transform: translateY(1px) scale(0.98);
+            filter: none;
+        }
+        .nav-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: #1a1a20;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.45rem 0.95rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.35);
+            white-space: nowrap;
+        }
+        .banner-curve {
+            position: relative;
+            background: #0c0c10;
+            border-bottom-left-radius: 50% 28px;
+            border-bottom-right-radius: 50% 28px;
+            padding-bottom: 1.75rem;
+            overflow: visible;
+            z-index: 20;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        }
+        .panel-2a {
+            background: #2a2a32;
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        }
+        .project-card {
+            background: #1e1e24;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .project-card:hover {
+            border-color: rgba(255,255,255,0.16);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.45);
+        }
+    </style>
+</head>
+<body class="bg-[#121216] text-base-content antialiased">
+
+    <header class="banner-curve w-full px-4 sm:px-8 pt-4 relative">
+        <div class="relative max-w-6xl mx-auto flex items-center justify-between gap-3 sm:gap-6">
+            <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                <a href="index.html" class="text-4xl sm:text-5xl leading-none select-none" title="Back to home">🤫</a>
+                <div class="min-w-0">
+                    <h1 class="text-xl sm:text-3xl font-black tracking-tight text-white leading-none">
+                        My Other Projects
+                    </h1>
+                    <p class="text-xs sm:text-sm text-base-content/50 mt-1">From the creator of CensorUp-Local</p>
+                </div>
+            </div>
+            <a href="index.html" class="bounce-wrap" title="Back to CensorUp-Local">
+                <span class="nav-pill pointer-events-none">
+                    <i class="ti ti-arrow-left"></i>
+                    <span>Home</span>
+                </span>
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-8 py-10 md:py-14">
+        <div class="panel-2a p-5 sm:p-8">
+            <p class="text-base-content/70 text-base sm:text-lg mb-8 max-w-2xl">
+                A few other things I’ve built. Click a card to open it (GitHub, site, etc.).
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                <!-- Example project card — duplicate & edit for each project -->
+                <a href="https://github.com/Thunderstrike597/CensorUp-Local"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="project-card p-6 block">
+                    <h2 class="text-xl font-black text-white mb-2 flex items-center gap-2">
+                        <i class="ti ti-brand-github text-primary"></i>
+                        CensorUp-Local
+                    </h2>
+                    <p class="text-base-content/70 text-sm leading-relaxed">
+                        Offline, single-file video/audio profanity censor tool. (You’re already here for the main page.)
+                    </p>
+                </a>
+
+                <!-- Placeholder — replace href/title/description -->
+                <div class="project-card p-6 opacity-70">
+                    <h2 class="text-xl font-black text-white mb-2 flex items-center gap-2">
+                        <i class="ti ti-folder text-secondary"></i>
+                        Project name here
+                    </h2>
+                    <p class="text-base-content/70 text-sm leading-relaxed">
+                        Short description. Edit this card in <code class="text-secondary">projects.html</code> — swap the
+                        placeholder for a real link when you’re ready.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="w-full py-10 text-center">
+        <a href="index.html" class="bounce-wrap inline-block">
+            <span class="nav-pill pointer-events-none">
+                <i class="ti ti-arrow-left"></i>
+                Back to CensorUp-Local
+            </span>
+        </a>
+    </footer>
+
+</body>
+</html>
